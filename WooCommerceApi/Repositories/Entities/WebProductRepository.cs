@@ -25,11 +25,13 @@ namespace WooCommerceApi.Repositories.Entities
             _wooProductRepository = wooProductRepository;
         }
 
-        public override void Create(WebProduct entity)
+        public override int Create(WebProduct entity)
         {
             // Convert WebProduct to WooProduct using the helper function
             WooProduct wooProduct = Converters.ConvertToWooProduct(entity);
-            _wooProductRepository.Create(wooProduct);
+            int createdId = _wooProductRepository.Create(wooProduct);
+            return createdId;
+
         }
 
         public override string Delete(int id)
@@ -70,11 +72,12 @@ namespace WooCommerceApi.Repositories.Entities
             return Converters.ConvertToWebProduct(wooProduct);
         }
 
-        public override void Update(int id, WebProduct entity)
+        public override int Update(int id, WebProduct entity)
         {
             // Convert WebProduct to WooProduct and update
             WooProduct wooProduct = Converters.ConvertToWooProduct(entity);
-            _wooProductRepository.Update(id, wooProduct);
+            int updatedId = _wooProductRepository.Update(id, wooProduct);
+            return updatedId;
         }
     }
 }

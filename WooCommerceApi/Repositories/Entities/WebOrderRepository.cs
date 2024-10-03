@@ -17,7 +17,7 @@ namespace WooCommerceApi.Repositories.Entities
         {
             _wooOrderRepository = wooOrderRepository;
         }
-        public void Create(WebOrder entity)
+        public int Create(WebOrder entity)
         {
             throw new NotImplementedException();
         }
@@ -48,11 +48,16 @@ namespace WooCommerceApi.Repositories.Entities
             throw new NotImplementedException();
         }
 
-        public void Update(int id, WebOrder entity)
+        public int Update(int id, WebOrder entity)
         {
             throw new NotImplementedException();
         }
         public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetMaxId()
         {
             throw new NotImplementedException();
         }

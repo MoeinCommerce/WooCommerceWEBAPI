@@ -18,7 +18,7 @@ namespace WooCommerceApi.Repositories.Entities
         {
             _wooCategoryRepository = wooCategoryRepository;
         }  
-        public void Create(WebCategory entity)
+        public int Create(WebCategory entity)
         {
             throw new NotImplementedException();
         }
@@ -48,12 +48,17 @@ namespace WooCommerceApi.Repositories.Entities
             throw new NotImplementedException();
         }
 
-        public void Update(int id, WebCategory entity)
+        public int Update(int id, WebCategory entity)
         {
             throw new NotImplementedException();
         }
 
         public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetMaxId()
         {
             throw new NotImplementedException();
         }

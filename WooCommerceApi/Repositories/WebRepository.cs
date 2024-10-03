@@ -155,14 +155,28 @@ namespace WooCommerceApi.Repositories
         /// Creates a new entity in WooCommerce.
         /// </summary>
         /// <param name="entity">The entity to create.</param>
-        public virtual void Create(T entity)
+        public virtual int Create(T entity)
         {
+            // Serialize the entity to JSON
             var json = JsonConvert.SerializeObject(entity);
+
+            // Prepare the REST request for the WooCommerce API
             var request = new RestRequest(_endpoint, Method.Post);
             request.AddJsonBody(json);
 
+            // Execute the request
             var response = _client.Execute(request);
+
+            // Ensure the response was successful
             EnsureSuccessStatusCode(response);
+
+            // Deserialize the response to an anonymous type to extract the ID
+            var responseObject = JsonConvert.DeserializeObject<dynamic>(response.Content);
+
+            // Extract the ID from the response
+            int id = responseObject.id;
+
+            return id; // Return the ID of the newly created product
         }
 
         /// <summary>
@@ -170,7 +184,7 @@ namespace WooCommerceApi.Repositories
         /// </summary>
         /// <param name="id">The ID of the entity to update.</param>
         /// <param name="entity">The updated entity data.</param>
-        public virtual void Update(int id, T entity)
+        public virtual int Update(int id, T entity)
         {
             var json = JsonConvert.SerializeObject(entity);
             var requestUrl = $"{_endpoint}/{id}";
@@ -179,6 +193,14 @@ namespace WooCommerceApi.Repositories
 
             var response = _client.Execute(request);
             EnsureSuccessStatusCode(response);
+
+            // Deserialize the response to an anonymous type to extract the ID
+            var responseObject = JsonConvert.DeserializeObject<dynamic>(response.Content);
+
+            // Extract the ID from the response
+            int _id = responseObject.id;
+
+            return _id; // Return the ID of the newly created product
         }
 
         /// <summary>
@@ -259,6 +281,35 @@ namespace WooCommerceApi.Repositories
         {
             Dispose(true);
             GC.Collect();
+        }
+
+
+        /// <summary>
+        /// Retrieves the maximum ID of entities using pagination.
+        /// </summary>
+        /// <returns>The maximum ID found.</returns>
+        public int GetMaxId()
+        {
+            // Add or update the query to only fetch the 'id' field and order by 'id' in descending order
+            _queryBuilder.AddOrUpdateParameter("_fields", "id");
+            _queryBuilder.AddOrUpdateParameter("orderby", "id");
+            _queryBuilder.AddOrUpdateParameter("order", "desc");
+            _queryBuilder.AddOrUpdateParameter("per_page", "1"); // Fetch only one record, the one with the highest id
+
+            var requestUrl = _queryBuilder.Build(_endpoint);
+            var request = new RestRequest(requestUrl, Method.Get);
+
+            // Execute the request
+            var response = _client.Execute(request);
+            EnsureSuccessStatusCode(response);
+
+            // Deserialize the JSON into a list of objects that contain the "id" property
+            var result = JsonConvert.DeserializeObject<IEnumerable<dynamic>>(response.Content);
+
+            // Safely extract the "id" values and convert them to a list of integers
+            var ids = result.Select(item => (int)item.id).ToList();
+
+            return ids.FirstOrDefault(); // Return the max ID (since only one item was fetched)
         }
 
         ~WebRepository()
