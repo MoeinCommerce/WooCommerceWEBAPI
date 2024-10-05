@@ -36,7 +36,7 @@ namespace WooCommerceApi.Helpers
                     Name = c.Name ?? string.Empty,
                     Slug = c.Slug ?? string.Empty
                 }).ToList() ?? new List<WooProductCategory>(),
-                Tags = entity.Tags != null && entity.Tags.Any() ? string.Join(",", entity.Tags) : string.Empty,
+                Tags = entity.Tags != null && entity.Tags.Any() ? entity.Tags : new List<string>(),
                 Images = entity.Images?.Select(i => new WooProductImage
                 {
                     Id = i.Id,
@@ -95,7 +95,7 @@ namespace WooCommerceApi.Helpers
                     Name = c.Name,
                     Slug = c.Slug
                 }).ToList(),
-                Tags = woo.Tags?.Split(',').ToList(),
+                Tags = woo.Tags,
                 Images = woo.Images?.Select(i => new WebProductImage
                 {
                     Id = i.Id,

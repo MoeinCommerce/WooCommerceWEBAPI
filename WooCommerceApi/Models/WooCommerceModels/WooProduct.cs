@@ -65,10 +65,10 @@ namespace WooCommerceApi.Models.WooCommerceModels
         public string Virtual { get; set; }
 
         [JsonProperty("downloadable")]
-        public string Downloadable { get; set; }
+        public bool Downloadable { get; set; }
 
         [JsonProperty("downloads")]
-        public string Downloads { get; set; }
+        public List<string> Downloads { get; set; }
 
         [JsonProperty("download_limit")]
         public string DownloadLimit { get; set; }
@@ -83,7 +83,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
         public string ButtonText { get; set; }
 
         [JsonProperty("tax_status")]
-        public List<string> TaxStatus { get; set; }
+        public string TaxStatus { get; set; }
 
         [JsonProperty("tax_class")]
         public string TaxClass { get; set; }
@@ -95,10 +95,10 @@ namespace WooCommerceApi.Models.WooCommerceModels
         public string StockQuantity { get; set; }
 
         [JsonProperty("stock_status")]
-        public List<string> StockStatus { get; set; }
+        public string StockStatus { get; set; }
 
         [JsonProperty("backorders")]
-        public List<string> Backorders { get; set; }
+        public string Backorders { get; set; }
 
         [JsonProperty("sold_individually")]
         public string SoldIndividually { get; set; }
@@ -116,10 +116,10 @@ namespace WooCommerceApi.Models.WooCommerceModels
         public string ReviewsAllowed { get; set; }
 
         [JsonProperty("upsell_ids")]
-        public string UpsellIds { get; set; }
+        public List<string> UpsellIds { get; set; }
 
         [JsonProperty("cross_sell_ids")]
-        public string CrossSellIds { get; set; }
+        public List<string> CrossSellIds { get; set; }
 
         [JsonProperty("parent_id")]
         public string ParentId { get; set; }
@@ -131,7 +131,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
         public List<WooProductCategory> Categories { get; set; } // Replaced with WooProductCategory class
 
         [JsonProperty("tags")]
-        public string Tags { get; set; }
+        public List<string> Tags { get; set; }
 
         [JsonProperty("images")]
         public List<WooProductImage> Images { get; set; } // Replaced with WooProductImage class
@@ -140,13 +140,13 @@ namespace WooCommerceApi.Models.WooCommerceModels
         public List<WooProductAttribute> Attributes { get; set; } // Replaced with WooProductAttribute class
 
         [JsonProperty("default_attributes")]
-        public string DefaultAttributes { get; set; }
+        public List<string> DefaultAttributes { get; set; }
 
         [JsonProperty("menu_order")]
         public string MenuOrder { get; set; }
 
         [JsonProperty("meta_data")]
-        public string MetaData { get; set; }
+        public List<string> MetaData { get; set; }
     }
 
     public class WooProductDimensions
