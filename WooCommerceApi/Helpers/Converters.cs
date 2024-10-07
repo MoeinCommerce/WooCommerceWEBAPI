@@ -15,6 +15,7 @@ namespace WooCommerceApi.Helpers
 
             return new WooProduct
             {
+                Id = entity.Id.ToString(),
                 Name = entity.Name ?? string.Empty,
                 Slug = entity.Slug ?? string.Empty,
                 DateCreated = entity.DateCreated != DateTime.MinValue ?
@@ -78,6 +79,7 @@ namespace WooCommerceApi.Helpers
         {
             return new WebProduct
             {
+                Id = Convert.ToInt32(woo.Id),
                 Name = woo.Name,
                 Slug = woo.Slug,
                 DateCreated = DateTime.Parse(woo.DateCreated), // Assuming valid ISO date format

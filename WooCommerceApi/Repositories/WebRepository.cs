@@ -32,7 +32,7 @@ namespace WooCommerceApi.Repositories
         public WebRepository(Dictionary<string, string> apiConfigs, string endpoint)
         {
             _apiConfigs = apiConfigs;
-            _client = new RestClient(baseUrl: _apiConfigs["BaseUrl"]);
+            _client = new RestClient(baseUrl: _apiConfigs["Url"]);
             _queryBuilder = new QueryFilterBuilder();
             SetParameters(endpoint);
 
