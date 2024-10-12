@@ -79,42 +79,43 @@ namespace WooCommerceApi.Helpers
         {
             return new WebProduct
             {
-                Id = Convert.ToInt32(woo.Id),
-                Name = woo.Name,
-                Slug = woo.Slug,
-                DateCreated = DateTime.Parse(woo.DateCreated), // Assuming valid ISO date format
+                Id = woo.Id != null ? Convert.ToInt32(woo.Id) : 0, // Default to 0 if null
+                Name = woo.Name ?? string.Empty, // Default to an empty string if null
+                Slug = woo.Slug ?? string.Empty, // Default to an empty string if null
+                DateCreated = !string.IsNullOrEmpty(woo.DateCreated) ? DateTime.Parse(woo.DateCreated) : DateTime.MinValue, // Handle null or empty date
                 DateModified = DateTime.UtcNow, // This can be populated based on actual data if available
-                Type = woo.Type,
-                Status = woo.Status,
-                Description = woo.Description,
-                Sku = woo.Sku,
-                RegularPrice = woo.RegularPrice,
-                SalePrice = woo.SalePrice,
-                StockQuantity = int.TryParse(woo.StockQuantity, out int qty) ? qty : 0,
+                Type = woo.Type ?? string.Empty, // Default to an empty string if null
+                Status = woo.Status ?? string.Empty, // Default to an empty string if null
+                Description = woo.Description ?? string.Empty, // Default to an empty string if null
+                Sku = woo.Sku ?? string.Empty, // Default to an empty string if null
+                RegularPrice = woo.RegularPrice ?? string.Empty, // Default to an empty string if null
+                SalePrice = woo.SalePrice ?? string.Empty, // Default to an empty string if null
+                StockQuantity = int.TryParse(woo.StockQuantity, out int qty) ? qty : 0, // Handle stock quantity parse
                 Categories = woo.Categories?.Select(c => new WebCategory
                 {
                     Id = c.Id,
-                    Name = c.Name,
-                    Slug = c.Slug
+                    Name = c.Name ?? string.Empty, // Default to an empty string if null
+                    Slug = c.Slug ?? string.Empty // Default to an empty string if null
                 }).ToList(),
-                Tags = woo.Tags,
+                Tags = woo.Tags ?? new List<string>(), // Default to an empty list if null
                 Images = woo.Images?.Select(i => new WebProductImage
                 {
                     Id = i.Id,
-                    Src = i.Src,
-                    Name = i.Name,
-                    Alt = i.Alt
+                    Src = i.Src ?? string.Empty, // Default to an empty string if null
+                    Name = i.Name ?? string.Empty, // Default to an empty string if null
+                    Alt = i.Alt ?? string.Empty // Default to an empty string if null
                 }).ToList(),
                 Attributes = woo.Attributes?.Select(a => new WebProductAttribute
                 {
                     Id = a.Id,
-                    Name = a.Name,
+                    Name = a.Name ?? string.Empty, // Default to an empty string if null
                     Position = a.Position,
                     Visible = a.Visible,
                     Variation = a.Variation,
-                    Options = a.Options
+                    Options = a.Options ?? new List<string>() // Default to an empty list if null
                 }).ToList(),
             };
         }
+
     }
 }
