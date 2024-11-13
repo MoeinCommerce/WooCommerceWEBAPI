@@ -19,23 +19,20 @@ namespace WooCommerceApi.Models.WooCommerceModels
         public string Slug { get; set; }
 
         [JsonProperty("date_created")]
-        public string DateCreated { get; set; }
+        public DateTime? DateCreated { get; set; }
+        
+        [JsonProperty("date_modified")]
+        public DateTime? DateModified { get; set; }
 
         [JsonProperty("date_created_gmt")]
-        public string DateCreatedGmt { get; set; }
+        public DateTime? DateCreatedGmt { get; set; }
 
         [JsonProperty("type")]
         public string Type { get; set; }
 
         [JsonProperty("status")]
         public string Status { get; set; }
-
-        [JsonProperty("featured")]
-        public string Featured { get; set; }
-
-        //[JsonProperty("catalog_visibility")]
-        //public string CatalogVisibility { get; set; }
-
+        
         [JsonProperty("description")]
         public string Description { get; set; }
 
@@ -50,40 +47,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
 
         [JsonProperty("sale_price")]
         public string SalePrice { get; set; }
-
-        [JsonProperty("date_on_sale_from")]
-        public string DateOnSaleFrom { get; set; }
-
-        [JsonProperty("date_on_sale_from_gmt")]
-        public string DateOnSaleFromGmt { get; set; }
-
-        [JsonProperty("date_on_sale_to")]
-        public string DateOnSaleTo { get; set; }
-
-        [JsonProperty("date_on_sale_to_gmt")]
-        public string DateOnSaleToGmt { get; set; }
-
-        [JsonProperty("virtual")]
-        public string Virtual { get; set; }
-
-        [JsonProperty("downloadable")]
-        public bool Downloadable { get; set; }
-
-        [JsonProperty("downloads")]
-        public List<string> Downloads { get; set; }
-
-        [JsonProperty("download_limit")]
-        public string DownloadLimit { get; set; }
-
-        [JsonProperty("download_expiry")]
-        public string DownloadExpiry { get; set; }
-
-        [JsonProperty("external_url")]
-        public Uri ExternalUrl { get; set; }
-
-        [JsonProperty("button_text")]
-        public string ButtonText { get; set; }
-
+        
         [JsonProperty("tax_status")]
         public string TaxStatus { get; set; }
 
@@ -99,56 +63,11 @@ namespace WooCommerceApi.Models.WooCommerceModels
         [JsonProperty("stock_status")]
         public string StockStatus { get; set; }
 
-        [JsonProperty("backorders")]
-        public string Backorders { get; set; }
-
-        [JsonProperty("sold_individually")]
-        public string SoldIndividually { get; set; }
-
         [JsonProperty("weight")]
         public string Weight { get; set; }
 
-        [JsonProperty("dimensions")]
-        public WooProductDimensions Dimensions { get; set; } // Replaced with WooProductDimensions class
-
-        [JsonProperty("shipping_class")]
-        public string ShippingClass { get; set; }
-
-        [JsonProperty("reviews_allowed")]
-        public string ReviewsAllowed { get; set; }
-
-        [JsonProperty("upsell_ids")]
-        public List<string> UpsellIds { get; set; }
-
-        [JsonProperty("cross_sell_ids")]
-        public List<string> CrossSellIds { get; set; }
-
-        [JsonProperty("parent_id")]
-        public string ParentId { get; set; }
-
-        [JsonProperty("purchase_note")]
-        public string PurchaseNote { get; set; }
-
         [JsonProperty("categories")]
-        public List<WooProductCategory> Categories { get; set; } // Replaced with WooProductCategory class
-
-        [JsonProperty("tags")]
-        public List<string> Tags { get; set; }
-
-        [JsonProperty("images")]
-        public List<WooProductImage> Images { get; set; } // Replaced with WooProductImage class
-
-        [JsonProperty("attributes")]
-        public List<WooProductAttribute> Attributes { get; set; } // Replaced with WooProductAttribute class
-
-        [JsonProperty("default_attributes")]
-        public List<string> DefaultAttributes { get; set; }
-
-        [JsonProperty("menu_order")]
-        public string MenuOrder { get; set; }
-
-        [JsonProperty("meta_data")]
-        public List<string> MetaData { get; set; }
+        public List<WooCategory> Categories { get; set; } // Replaced with WooProductCategory class
     }
 
     public class WooProductDimensions
@@ -209,6 +128,17 @@ namespace WooCommerceApi.Models.WooCommerceModels
 
         [JsonProperty("options")]
         public List<string> Options { get; set; } = new List<string>(); // Initialize to avoid null issues
+    }
+    public class WooProductDownloadModel
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("file")]
+        public string File { get; set; }
     }
 
     public class WooProductVariation
