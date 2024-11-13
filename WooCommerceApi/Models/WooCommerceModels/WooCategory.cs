@@ -17,16 +17,8 @@ namespace WooCommerceApi.Models.WooCommerceModels
         public int Parent { get; set; }
 
         public string Description { get; set; }
-
-        public string Display { get; set; }
-
-        public WooCategoryImage Image { get; set; }
-
-        public int MenuOrder { get; set; }
-
+        
         public int Count { get; set; }
-
-        public WooCategoryLinks Links { get; set; }
     }
 
     public class WooCategoryImage
