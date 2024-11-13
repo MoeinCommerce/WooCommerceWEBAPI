@@ -59,16 +59,13 @@ namespace WooCommerceApi.Helpers
         /// <returns>The complete URL with query parameters.</returns>
         public string Build(string baseUrl)
         {
-            if (_queryParameters.Any())
-            {
-                var queryString = string.Join("&", _queryParameters
-                    .Where(param => !string.IsNullOrWhiteSpace(param.Value)) // Filter out null or empty values
-                    .Select(param => $"{HttpUtility.UrlEncode(param.Key)}={HttpUtility.UrlEncode(param.Value)}"));
+            if (!_queryParameters.Any()) return baseUrl; // Return the base URL if no query parameters exist
+            var queryString = string.Join("&", _queryParameters
+                .Where(param => !string.IsNullOrWhiteSpace(param.Value)) // Filter out null or empty values
+                .Select(param => $"{HttpUtility.UrlEncode(param.Key)}={HttpUtility.UrlEncode(param.Value)}"));
 
-                return $"{baseUrl}?{queryString}";
-            }
-
-            return baseUrl; // Return the base URL if no query parameters exist
+            if (string.IsNullOrWhiteSpace(queryString)) return baseUrl; // Return the base URL if no valid query parameters exist
+            return $"{baseUrl}?{queryString}";
         }
 
         /// <summary>
