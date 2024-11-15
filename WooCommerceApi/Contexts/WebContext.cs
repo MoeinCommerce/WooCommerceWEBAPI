@@ -152,7 +152,7 @@ namespace WooCommerceApi.Contexts
             var createdProduct = SendRequest<WooProduct>(request, wooProduct).Result;
             return WooCommerceConverters.TryToInt(createdProduct.Id);
         }
-        public async Task<int> UpdateProductAsync(int id, WebProduct entity)
+        public new int UpdateProduct(int id, WebProduct entity)
         {
             var existingProduct = GetProductById(id);
             if (existingProduct == null)
@@ -162,7 +162,7 @@ namespace WooCommerceApi.Contexts
             var endpoint = $"products/{id}";
             var request = new RestRequest(endpoint, Method.Put);
             var updatedProductData = WooCommerceConverters.ToWooProduct(entity);
-            var updatedProduct = await SendRequest<WooProduct>(request, updatedProductData);
+            var updatedProduct = SendRequest<WooProduct>(request, updatedProductData);
 
             return WooCommerceConverters.TryToInt(updatedProduct.Id);
         }
@@ -263,8 +263,11 @@ namespace WooCommerceApi.Contexts
         }
 
         public new WebCategory GetCategoryById(int id)
-        {
-            throw new System.NotImplementedException();
+        { 
+            var endPoint = $"products/categories/{id}";
+            var request = new RestRequest(endPoint, Method.Get);
+            var wooCategory = SendRequest<WooCategory>(request).Result;
+            return WooCommerceConverters.ToWebCategory(wooCategory);
         }
 
         public new IEnumerable<WebCategory> GetAllCategories()
@@ -279,12 +282,25 @@ namespace WooCommerceApi.Contexts
 
         public new int CreateCategory(WebCategory entity)
         {
-            throw new System.NotImplementedException();
+            const string endPoint = "products/categories";
+            var wooCategory = WooCommerceConverters.ToWooCategory(entity);
+            var request = new RestRequest(endPoint, Method.Post);
+            var createdCategory = SendRequest<WooCategory>(request, wooCategory).Result;
+            return WooCommerceConverters.TryToInt(createdCategory.Id);
         }
 
         public new int UpdateCategory(int id, WebCategory entity)
         {
-            throw new System.NotImplementedException();
+            var existingCategory = GetCategoryById(id);
+            if (existingCategory == null)
+            {
+                throw new DoesNotExistException();
+            }
+            var endPoint = $"products/categories/{id}";
+            var request = new RestRequest(endPoint, Method.Put);
+            var updatedCategoryData = WooCommerceConverters.ToWooCategory(entity);
+            var updatedCategory = SendRequest<WooCategory>(request, updatedCategoryData);
+            return WooCommerceConverters.TryToInt(updatedCategory.Id);
         }
 
         public new IList<WebCategory> GetAllCategoriesWithFields(IList<string> fields)
