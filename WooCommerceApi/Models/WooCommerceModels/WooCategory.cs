@@ -14,7 +14,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
 
         public string Slug { get; set; }
 
-        public int Parent { get; set; }
+        public int? Parent { get; set; }
 
         public string Description { get; set; }
         
