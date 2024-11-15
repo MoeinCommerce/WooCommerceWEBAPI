@@ -13,6 +13,7 @@ namespace WooCommerceApi.Helpers
         {
             return new WooProduct
             {
+                Id = webProduct.Id,
                 Name = webProduct.Name,
                 Slug = webProduct.Slug,
                 Description = webProduct.Description,
