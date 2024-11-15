@@ -10,7 +10,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
     public class WooProduct
     {
         [JsonProperty("id")]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }
