@@ -57,11 +57,17 @@ namespace WooCommerceApi.Contexts
                     request.AddJsonBody(jsonBody);
                 }
                 var response = _client.Execute(request);
+                
+                // Decode the response content
+                var decodedContent = response.RawBytes != null 
+                    ? Encoding.UTF8.GetString(response.RawBytes) // Replace UTF8 if needed
+                    : response.Content ?? string.Empty;
+                
                 switch (response.StatusCode)
                 {
                     case HttpStatusCode.OK:
                     case HttpStatusCode.Created:  // Handle created status for POST requests
-                        return Task.FromResult(JsonConvert.DeserializeObject<T>(response.Content ?? string.Empty));
+                        return Task.FromResult(JsonConvert.DeserializeObject<T>(decodedContent));
                     case HttpStatusCode.NotFound:
                         throw new DoesNotExistException();
                     case HttpStatusCode.BadRequest:
