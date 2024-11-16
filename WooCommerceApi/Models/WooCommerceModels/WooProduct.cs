@@ -67,7 +67,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
         public string Weight { get; set; }
 
         [JsonProperty("categories")]
-        public List<WooCategory> Categories { get; set; } // Replaced with WooProductCategory class
+        public List<MinimalWooCategory> Categories { get; set; } // Replaced with WooProductCategory class
     }
 
     public class WooProductDimensions

@@ -88,6 +88,7 @@
     <Compile Include="Helpers\QueryFilterBuilder.cs" />
     <Compile Include="Helpers\WooCommerceConverters.cs" />
     <Compile Include="Information.cs" />
+    <Compile Include="Models\WooCommerceModels\MinimalWooCategory.cs" />
     <Compile Include="Models\WooCommerceModels\WooCategory.cs" />
     <Compile Include="Models\WooCommerceModels\WooOrder.cs" />
     <Compile Include="Models\WooCommerceModels\WooProduct.cs" />

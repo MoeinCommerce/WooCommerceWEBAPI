@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using WebApi.Models;
 using WooCommerceApi.Models.WooCommerceModels;
 
@@ -18,14 +19,13 @@ namespace WooCommerceApi.Helpers
                 Slug = webProduct.Slug,
                 Description = webProduct.Description,
                 RegularPrice = webProduct.RegularPrice.ToString(CultureInfo.InvariantCulture),
-                SalePrice = webProduct.SalePrice.ToString(CultureInfo.InvariantCulture),
+                SalePrice = webProduct.SalePrice?.ToString(),
                 StockQuantity = webProduct.StockQuantity.ToString(),
                 Sku = webProduct.Sku,
-                Categories = webProduct.Categories?.Select(c => new WooCategory
+                Categories = webProduct.Categories?.Select(c => new MinimalWooCategory
                 {
-                    Id = c.Id,
-                    Name = c.Name
-                }).ToList(),
+                    Id = c.Id
+                }).ToList()
             };
         }
 
@@ -42,13 +42,12 @@ namespace WooCommerceApi.Helpers
                 Description = wooProduct.Description,
                 Sku = wooProduct.Sku,
                 RegularPrice = TryToDecimal(wooProduct.RegularPrice),
-                SalePrice = TryToDecimal(wooProduct.SalePrice),
+                SalePrice = TryToNullableDecimal(wooProduct.SalePrice),
                 StockQuantity = TryToInt(wooProduct.StockQuantity),
-                Categories = wooProduct.Categories?.Select(c => new WebCategory
+                Categories =  wooProduct.Categories?.Select(c => new WebCategory
                 {
-                    Id = TryToInt(c.Id),
-                    Name = c.Name
-                }).ToList(),
+                    Id = c.Id
+                }).ToList()
             };
         }
 
@@ -56,22 +55,38 @@ namespace WooCommerceApi.Helpers
         {
             return new WooCategory
             {
+                Id = webCategory.Id,
                 Name = webCategory.Name,
                 Description = webCategory.Description,
                 Parent = webCategory.ParentId,
+                Slug = webCategory.Name.GenerateSlug()
             };
+        }
+
+        private static int? TryToNullableInt(object value)
+        {
+            int.TryParse(value?.ToString(), out int result);
+            if (result == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return result;
+            }
         }
 
         public static WebCategory ToWebCategory(WooCategory wooCategory)
         {
             return new WebCategory
             {
-                Id = TryToInt(wooCategory.Id),
+                Id = TryToNullableInt(wooCategory.Id) ?? 0,  // Assigns 0 if Id is null
                 Name = wooCategory.Name,
                 Description = wooCategory.Description,
-                ParentId = TryToInt(wooCategory.Parent),
+                ParentId = TryToNullableInt(wooCategory.Parent)
             };
         }
+
         internal static int TryToInt(object value)
         {
             return int.TryParse(value?.ToString(), out var result) ? result : 0;
@@ -80,6 +95,28 @@ namespace WooCommerceApi.Helpers
         internal static decimal TryToDecimal(object value)
         {
             return decimal.TryParse(value?.ToString(), out var result) ? result : 0m;
+        }
+        internal static decimal? TryToNullableDecimal(object value)
+        {
+            return decimal.TryParse(value?.ToString(), out var result) ? result : (decimal?)null;
+        }
+        public static string GenerateSlug(this string phrase) 
+        { 
+            string str = phrase.RemoveAccent().ToLower(); 
+            // invalid chars           
+            str = Regex.Replace(str, @"[^a-z0-9\s-]", ""); 
+            // convert multiple spaces into one space   
+            str = Regex.Replace(str, @"\s+", " ").Trim(); 
+            // cut and trim 
+            str = str.Substring(0, str.Length <= 45 ? str.Length : 45).Trim();   
+            str = Regex.Replace(str, @"\s", "-"); // hyphens   
+            return str; 
+        } 
+
+        public static string RemoveAccent(this string txt) 
+        { 
+            byte[] bytes = System.Text.Encoding.GetEncoding("Cyrillic").GetBytes(txt); 
+            return System.Text.Encoding.ASCII.GetString(bytes); 
         }
     }
 }
