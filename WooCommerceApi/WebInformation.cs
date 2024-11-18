@@ -8,7 +8,7 @@ using WebApi.Models;
 
 namespace WooCommerceApi
 {
-    public class Information : IWebInformation
+    public class WebInformation : IWebInformation
     {
         public string Name => "WooCommerceApi";
 
