@@ -24,11 +24,10 @@ namespace WooCommerceApi.Contexts
         private int _pageSize = 10;
         private int _maxPage = int.MaxValue;
 
-        public WebContext(Dictionary<string, string> configs) : base(configs)
+        public WebContext(string url, Dictionary<string, string> configs) : base(url, configs)
         {
             try
             {
-                var url = configs["WooCommerceUrl"];
                 var consumerKey = configs["WooCommerceConsumerKey"];
                 var consumerSecret = configs["WooCommerceConsumerSecret"];
                 const string path = "wp-json/wc/v3";
@@ -56,17 +55,18 @@ namespace WooCommerceApi.Contexts
                     var jsonBody = JsonConvert.SerializeObject(body);
                     request.AddJsonBody(jsonBody);
                 }
+
                 var response = _client.Execute(request);
-                
+
                 // Decode the response content
-                var decodedContent = response.RawBytes != null 
+                var decodedContent = response.RawBytes != null
                     ? Encoding.UTF8.GetString(response.RawBytes) // Replace UTF8 if needed
                     : response.Content ?? string.Empty;
-                
+
                 switch (response.StatusCode)
                 {
                     case HttpStatusCode.OK:
-                    case HttpStatusCode.Created:  // Handle created status for POST requests
+                    case HttpStatusCode.Created: // Handle created status for POST requests
                         return Task.FromResult(JsonConvert.DeserializeObject<T>(decodedContent));
                     case HttpStatusCode.NotFound:
                         throw new DoesNotExistException();
@@ -77,6 +77,10 @@ namespace WooCommerceApi.Contexts
                     default:
                         throw new InvalidFieldException($"Error! Status code: {response.StatusCode}", response.Content);
                 }
+            }
+            catch (InvalidFieldException ex)
+            {
+                throw;
             }
             catch (Exception ex)
             {
