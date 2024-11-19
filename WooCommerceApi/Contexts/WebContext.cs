@@ -24,7 +24,7 @@ namespace WooCommerceApi.Contexts
         private int _pageSize = 10;
         private int _maxPage = int.MaxValue;
 
-        public WebContext(string url, Dictionary<string, string> configs) : base(url, configs)
+        public WebContext(string url, Dictionary<string, string> configs) : base(configs)
         {
             try
             {
