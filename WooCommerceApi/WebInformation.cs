@@ -26,12 +26,6 @@ namespace WooCommerceApi
             {
                 new WebConfig
                 {
-                    Key = "WooCommerceUrl",
-                    DefaultValue = "https://example.com",
-                    DisplayName = "WooCommerce Url"
-                },
-                new WebConfig
-                {
                     Key = "WooCommerceConsumerKey",
                     DefaultValue = "ck_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
                     DisplayName = "WooCommerce Consumer Key"

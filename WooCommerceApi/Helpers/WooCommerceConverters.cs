@@ -20,6 +20,7 @@ namespace WooCommerceApi.Helpers
                 Description = webProduct.Description,
                 RegularPrice = webProduct.RegularPrice.ToString(CultureInfo.InvariantCulture),
                 SalePrice = webProduct.SalePrice?.ToString(),
+                ManageStock = "true",
                 StockQuantity = webProduct.StockQuantity.ToString(),
                 Sku = webProduct.Sku,
                 Categories = webProduct.Categories?.Select(c => new MinimalWooCategory
