@@ -63,6 +63,28 @@ namespace WooCommerceApi.Helpers
                 Slug = webCategory.Name.GenerateSlug()
             };
         }
+        
+        public static WebCustomer ToWebCustomer(WooCustomer wooCustomer)
+        {
+            return new WebCustomer
+            {
+                Id = wooCustomer.Id,
+                FirstName = wooCustomer.FirstName,
+                LastName = wooCustomer.LastName,
+                Email = wooCustomer.Email,
+                PhoneNumbers = new List<string>
+                {
+                    wooCustomer.Phone  
+                },
+                Address1 = wooCustomer.Address1,
+                Address2 = wooCustomer.Address2,
+                City = wooCustomer.City,
+                State = wooCustomer.State,
+                Postcode = wooCustomer.Postcode,
+                Country = wooCustomer.Country,
+                CreatedDate = wooCustomer.DateCreated ?? DateTime.Now,
+            };
+        }
 
         private static int? TryToNullableInt(object value)
         {
