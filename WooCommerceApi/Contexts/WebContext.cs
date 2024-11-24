@@ -24,7 +24,7 @@ namespace WooCommerceApi.Contexts
         private int _pageSize = 10;
         private int _maxPage = int.MaxValue;
 
-        public WebContext(string url, Dictionary<string, string> configs) : base(configs)
+        public WebContext(string url, Dictionary<string, string> configs) : base(url, configs)
         {
             try
             {
@@ -74,6 +74,12 @@ namespace WooCommerceApi.Contexts
                         throw new InvalidFieldException("BadRequest", response.Content);
                     case HttpStatusCode.Unauthorized:
                         throw new InvalidFieldException("Unauthorized", response.Content);
+                    case HttpStatusCode.Forbidden:
+                        throw new InvalidFieldException("Forbidden", response.Content);
+                    case HttpStatusCode.InternalServerError:
+                        throw new InvalidFieldException("InternalServerError", response.Content);
+                    case 0:
+                        throw new NetworkError();
                     default:
                         throw new InvalidFieldException($"Error! Status code: {response.StatusCode}", response.Content);
                 }
@@ -355,7 +361,32 @@ namespace WooCommerceApi.Contexts
                 return true;
             }).Select(WooCommerceConverters.ToWebCategory).ToList();
         }
-
+        
+        #region Customer
+        
+        public IEnumerable<WebCustomer> SearchCustomers(string searchTerm, int page = 1, int pageSize = 10, int maxPage = 1)
+        {   
+            _currentPage = page < 1 ? 1 : page;
+            _pageSize = pageSize > 100 || pageSize < 1 ? 100 : pageSize;
+            _maxPage = maxPage < 1 ? 1 : maxPage;
+            const string endPoint = "customers";
+            var request = new RestRequest(endPoint, Method.Get);
+            if (searchTerm == null)
+            {
+                return new List<WebCustomer>();
+            }
+            
+            request.AddParameter("search", searchTerm);
+            var results = new List<WooCustomer>();
+            return GetAllWithPagination<WooCustomer>(request, pageResults =>
+            {
+                results.AddRange(pageResults);
+                return true;
+            }).Select(WooCommerceConverters.ToWebCustomer).ToList();
+        }
+        
+        #endregion
+        
         public new void Dispose()
         {
             throw new System.NotImplementedException();
