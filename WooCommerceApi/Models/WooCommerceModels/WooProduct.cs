@@ -30,8 +30,8 @@ namespace WooCommerceApi.Models.WooCommerceModels
         [JsonProperty("type")]
         public string Type { get; set; }
 
-        [JsonProperty("status")]
-        public string Status { get; set; }
+        // [JsonProperty("status")]
+        // public string Status { get; set; }
         
         [JsonProperty("description")]
         public string Description { get; set; }

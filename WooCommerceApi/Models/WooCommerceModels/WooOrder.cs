@@ -21,8 +21,8 @@ namespace WooCommerceApi.Models.WooCommerceModels
         [JsonProperty("payment_method")]
         public string PaymentMethod { get; set; }
         
-        [JsonProperty("status")]
-        public string Status { get; set; }
+        //[JsonProperty("status")]
+        // public string Status { get; set; }
         
         [JsonProperty("date_created")]
         public DateTime? DateCreated { get; set; }
