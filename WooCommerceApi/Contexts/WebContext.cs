@@ -1,6 +1,8 @@
 ﻿
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -384,7 +386,132 @@ namespace WooCommerceApi.Contexts
                 return true;
             }).Select(WooCommerceConverters.ToWebCustomer).ToList();
         }
+
+        public new IEnumerable<KeyValuePair<int, string>> GetCustomerIdAndNameBySearch(
+            string searchTerm,
+            int page = 1,
+            int pageSize = 10,
+            int maxPage = 1)
+        {
+            var fields = new List<string> { "id", "first_name", "last_name" };
+            _currentPage = page < 1 ? 1 : page;
+            _currentPage = page < 1 ? 1 : page;
+            _pageSize = pageSize > 100 || pageSize < 1 ? 100 : pageSize;
+            _maxPage = maxPage < 1 ? 1 : maxPage;
+            const string endPoint = "customers";
+            var request = new RestRequest(endPoint, Method.Get);
+            if (searchTerm == null)
+            {
+                return new List<KeyValuePair<int, string>>();
+            }
+            
+            request.AddParameter("search", searchTerm);
+            request.AddParameter("_fields", string.Join(",", fields));
+            var results = new List<WooCustomer>();
+            return GetAllWithPagination<WooCustomer>(request, pageResults =>
+            {
+                results.AddRange(pageResults);
+                return true;
+            }).Select(w =>
+                new KeyValuePair<int, string>(w.Id, w.FirstName + " " +w.LastName))
+                .ToList();
+        }
+        #endregion
         
+        #region Orders
+
+        public new IEnumerable<WebOrder> GetAllOrdersExcludeById(IEnumerable<int> idsToExclude, DateTime? startDate, DateTime? endDate)
+        {
+            const string endPoint = "orders";
+            var idsToExcludeString = string.Join(",", idsToExclude);
+            var request = new RestRequest(endPoint, Method.Get);
+            request.AddParameter("exclude", idsToExcludeString);
+
+            if (startDate.HasValue)
+            {
+                request.AddParameter("after", startDate.Value.ToString("o")); // ISO 8601 format
+            }
+            if (endDate.HasValue)
+            {
+                request.AddParameter("before", endDate.Value.ToString("o")); // ISO 8601 format
+            }
+
+            var orders = SendRequest<IList<WooOrder>>(request).Result;
+            return orders.Select(WooCommerceConverters.ToWebOrder);
+        }
+        
+        public new IEnumerable<WebOrder> GetOrdersBySearch(
+            IEnumerable<int> idsToExclude,
+            string searchTerm,
+            string status,
+            int? customerId,
+            decimal totalMin,
+            decimal totalMax,
+            DateTime startDate,
+            DateTime endDate, 
+            int page = 1,
+            int pageSize = 10,
+            int maxPage = 1)
+        {
+            _currentPage = page < 1 ? 1 : page;
+            _pageSize = pageSize > 100 || pageSize < 1 ? 100 : pageSize;
+            _maxPage = maxPage < 1 ? 1 : maxPage;
+            const string endPoint = "orders";
+            var request = new RestRequest(endPoint, Method.Get);
+
+            if (idsToExclude != null && idsToExclude.Any())
+            {
+                var idsToExcludeString = string.Join(",", idsToExclude);
+                request.AddParameter("exclude", idsToExcludeString);
+            }
+            if (searchTerm != null)
+            {
+                request.AddParameter("search", searchTerm);
+            }
+            if (status != null)
+            {
+                request.AddParameter("status", status);
+            }
+            if (customerId > 0)
+            {
+                request.AddParameter("customer", customerId.Value);
+            }
+            if (totalMin > 0)
+            {
+                request.AddParameter("total_min", totalMin);
+            }
+            if (totalMax > 0)
+            {
+                request.AddParameter("total_max", totalMax);
+            }
+            if (startDate != DateTime.MinValue)
+            {
+                request.AddParameter("after", startDate.ToString("o")); // ISO 8601 format
+            }
+            if (endDate != DateTime.MinValue)
+            {
+                request.AddParameter("before", endDate.ToString("o")); // ISO 8601 format
+            }
+            var results = new List<WooOrder>();
+            return GetAllWithPagination<WooOrder>(request, pageResults =>
+            {
+                results.AddRange(pageResults);
+                return true;
+            }).Select(WooCommerceConverters.ToWebOrder).ToList();
+        }
+        
+        #endregion
+
+        #region PaymentMethods
+
+        public new IEnumerable<WebPaymentMethod> GetAllPaymentMethods()
+        {
+            const string endPoint = "payment_gateways";
+            var request = new RestRequest(endPoint, Method.Get);
+            var paymentMethods = SendRequest<IList<WooPaymentMethod>>(request).Result;
+            return paymentMethods.Select(WooCommerceConverters.ToWebPaymentMethod);
+        }
+
         #endregion
         
         public new void Dispose()
