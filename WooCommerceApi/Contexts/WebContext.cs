@@ -386,6 +386,24 @@ namespace WooCommerceApi.Contexts
                 return true;
             }).Select(WooCommerceConverters.ToWebCustomer).ToList();
         }
+        
+        public new IEnumerable<WebCustomer> GetAllCustomersWithFields(IList<string> fields)
+        {
+            if (fields == null || !fields.Any())
+            {
+                return new List<WebCustomer>();
+            }
+            const string endPoint = "customers";
+            var fieldsString = string.Join(",", fields);
+            var request = new RestRequest(endPoint, Method.Get);
+            request.AddParameter("_fields", fieldsString);
+            var results = new List<WooCustomer>();
+            return GetAllWithPagination<WooCustomer>(request, pageResults =>
+            {
+                results.AddRange(pageResults);
+                return true;
+            }).Select(WooCommerceConverters.ToWebCustomer).ToList();
+        }
 
         public new IEnumerable<KeyValuePair<int, string>> GetCustomerIdAndNameBySearch(
             string searchTerm,
