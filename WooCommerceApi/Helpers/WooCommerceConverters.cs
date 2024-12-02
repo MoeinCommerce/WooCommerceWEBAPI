@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using WebApi.Models;
 using WooCommerceApi.Models.WooCommerceModels;
+using WooCommerceApi.Utilities;
 
 namespace WooCommerceApi.Helpers
 {
@@ -110,6 +111,81 @@ namespace WooCommerceApi.Helpers
             };
         }
 
+        public static WebOrder ToWebOrder(WooOrder wooOrder)
+        {
+            Constants.PaymentMethods.TryGetValue(wooOrder.PaymentMethod, out var paymentMethodIntId);
+            return new WebOrder
+            {
+                Id = wooOrder.Id,
+                CustomerId = wooOrder.CustomerId,
+                PaymentMethodId = paymentMethodIntId,
+                TransactionId = wooOrder.TransactionId,
+                Status = wooOrder.Status,
+                DateCreated = wooOrder.DateCreated ?? DateTime.Now,
+                DateModified = wooOrder.DateModified ?? DateTime.Now,
+                Currency = wooOrder.Currency,
+                ShippingTotal = wooOrder.ShippingTotal,
+                OrderTax = wooOrder.TotalTax,
+                Billing = new WebCustomer
+                {
+                    FirstName = wooOrder.Billing.FirstName,
+                    LastName = wooOrder.Billing.LastName,
+                    Email = wooOrder.Billing.Email,
+                    PhoneNumbers = new List<string>
+                    {
+                        wooOrder.Billing.Phone
+                    },
+                    Address1 = wooOrder.Billing.Address1,
+                    Address2 = wooOrder.Billing.Address2,
+                    City = wooOrder.Billing.City,
+                    State = wooOrder.Billing.State,
+                    Postcode = wooOrder.Billing.Postcode,
+                    Country = wooOrder.Billing.Country
+                },
+                Shipping = new WebCustomer
+                {
+                    FirstName = wooOrder.Shipping.FirstName,
+                    LastName = wooOrder.Shipping.LastName,
+                    Email = wooOrder.Shipping.Email,
+                    PhoneNumbers = new List<string>
+                    {
+                        wooOrder.Shipping.Phone
+                    },
+                    Address1 = wooOrder.Shipping.Address1,
+                    Address2 = wooOrder.Shipping.Address2,
+                    City = wooOrder.Shipping.City,
+                    State = wooOrder.Shipping.State,
+                    Postcode = wooOrder.Shipping.Postcode,
+                    Country = wooOrder.Shipping.Country
+                },
+                OrderItems = wooOrder.LineItems.Select(item => new WebOrderDetail
+                {
+                    Name = item.Name,
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    UnitPrice = item.Price,
+                    TotalTax = item.TotalTax,
+                    SubtotalTax = item.SubtotalTax,
+                    Subtotal = item.Subtotal,
+                    VariationId = item.VariationId,
+                    TaxClass = item.TaxClass,
+                    // TODO: Research how to get the unit discount
+                    UnitDiscount = 0,
+                    UnitTax = item.Quantity == 0 ? item.TotalTax : item.TotalTax / item.Quantity,
+                }).ToList()
+            };
+        }
+        public static WebPaymentMethod ToWebPaymentMethod(WooPaymentMethod wooPaymentMethod)
+        {
+            Constants.PaymentMethods.TryGetValue(wooPaymentMethod.Id, out var paymentMethodIntId);
+            return new WebPaymentMethod
+            {
+                Id = paymentMethodIntId,
+                Title = wooPaymentMethod.Title,
+                Description = wooPaymentMethod.Description
+            };
+        }
+        
         internal static int TryToInt(object value)
         {
             return int.TryParse(value?.ToString(), out var result) ? result : 0;
@@ -134,12 +210,12 @@ namespace WooCommerceApi.Helpers
             str = str.Substring(0, str.Length <= 45 ? str.Length : 45).Trim();   
             str = Regex.Replace(str, @"\s", "-"); // hyphens   
             return str; 
-        } 
+        }
 
-        public static string RemoveAccent(this string txt) 
-        { 
-            byte[] bytes = System.Text.Encoding.GetEncoding("Cyrillic").GetBytes(txt); 
-            return System.Text.Encoding.ASCII.GetString(bytes); 
+        public static string RemoveAccent(this string txt)
+        {
+            byte[] bytes = System.Text.Encoding.GetEncoding("Cyrillic").GetBytes(txt);
+            return System.Text.Encoding.ASCII.GetString(bytes);
         }
     }
 }

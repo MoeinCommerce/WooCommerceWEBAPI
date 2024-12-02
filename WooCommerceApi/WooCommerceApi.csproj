@@ -80,7 +80,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="WebApi">
-      <HintPath>..\..\WEBAPI\WebApi\bin\Debug\WebApi.dll</HintPath>
+      <HintPath>..\..\WebApi\WebApi\bin\Debug\WebApi.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -88,6 +88,7 @@
     <Compile Include="Helpers\QueryFilterBuilder.cs" />
     <Compile Include="Helpers\WooCommerceConverters.cs" />
     <Compile Include="Models\WooCommerceModels\WooCustomer.cs" />
+    <Compile Include="Models\WooCommerceModels\WooPaymentMethod.cs" />
     <Compile Include="WebInformation.cs" />
     <Compile Include="Models\WooCommerceModels\MinimalWooCategory.cs" />
     <Compile Include="Models\WooCommerceModels\WooCategory.cs" />
