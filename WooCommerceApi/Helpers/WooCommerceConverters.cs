@@ -163,10 +163,7 @@ namespace WooCommerceApi.Helpers
                     Name = item.Name,
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
-                    UnitPrice = item.Price,
-                    TotalTax = item.TotalTax,
-                    SubtotalTax = item.SubtotalTax,
-                    Subtotal = item.Subtotal,
+                    UnitPrice = item.Quantity == 0 ? item.Subtotal : item.Subtotal / item.Quantity,
                     VariationId = item.VariationId,
                     TaxClass = item.TaxClass,
                     // TODO: Research how to get the unit discount
