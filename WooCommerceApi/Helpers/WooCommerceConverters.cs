@@ -125,7 +125,7 @@ namespace WooCommerceApi.Helpers
                 DateModified = wooOrder.DateModified ?? DateTime.Now,
                 Currency = wooOrder.Currency,
                 ShippingTotal = wooOrder.ShippingTotal,
-                OrderTax = wooOrder.TotalTax,
+                // OrderTax = wooOrder.TotalTax,
                 Billing = new WebCustomer
                 {
                     FirstName = wooOrder.Billing.FirstName,
