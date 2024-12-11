@@ -106,6 +106,8 @@ namespace WooCommerceApi.Models.WooCommerceModels
     public class WooOrderTax
     {
         public int Id { get; set; }
+
+        [JsonProperty("total")]
         public string Total { get; set; }
         public string Subtotal { get; set; }
     }
@@ -147,5 +149,8 @@ namespace WooCommerceApi.Models.WooCommerceModels
         public bool Compound { get; set; }
         public string TaxTotal { get; set; }
         public string ShippingTaxTotal { get; set; }
+
+        [JsonProperty("rate_percent")]
+        public int RatePercent { get; set; }
     }
 }
