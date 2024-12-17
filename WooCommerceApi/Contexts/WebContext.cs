@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using WebApi.Contexts;
 using WebApi.Contexts.Interfaces;
@@ -47,17 +48,42 @@ namespace WooCommerceApi.Contexts
                 throw new InvalidFieldException(ex.Source, ex.Message);
             }
         }
-        private Task<T> SendRequest<T>(RestRequest request, object body = null)
+        private Task<T> SendRequest<T>(RestRequest request, object body = null, List<ExcludedFields> excludedFields = null)
         {
             try
             {
-                // If there is a body, serialize it to JSON and add it to the request
+                // If there is a body, serialize it to JSON and process exclusions
                 if (body != null)
                 {
+                    // Serialize the body to JSON
                     var jsonBody = JsonConvert.SerializeObject(body);
+
+                    // Remove excluded fields from the JSON
+                    if (excludedFields != null && excludedFields.Count > 0)
+                    {
+                        var jsonObject = JObject.Parse(jsonBody);
+
+                        foreach (var excludedField in excludedFields)
+                        {
+                            var fieldNames = GetFieldNamesFromEnum(excludedField);
+                            foreach (var fieldName in fieldNames)
+                            {
+                                if (jsonObject.ContainsKey(fieldName))
+                                {
+                                    jsonObject.Remove(fieldName);
+                                }
+                            }
+                        }
+
+                        // Convert the modified JObject back to a string
+                        jsonBody = jsonObject.ToString();
+                    }
+
+                    // Add the (potentially modified) JSON body to the request
                     request.AddJsonBody(jsonBody);
                 }
 
+                // Execute the request
                 var response = _client.Execute(request);
 
                 // Decode the response content
@@ -65,6 +91,7 @@ namespace WooCommerceApi.Contexts
                     ? Encoding.UTF8.GetString(response.RawBytes) // Replace UTF8 if needed
                     : response.Content ?? string.Empty;
 
+                // Handle HTTP response codes
                 switch (response.StatusCode)
                 {
                     case HttpStatusCode.OK:
@@ -94,6 +121,36 @@ namespace WooCommerceApi.Contexts
             {
                 Console.WriteLine($"HTTP Request error: {ex.Message}");
                 throw;
+            }
+        }
+
+        // Map the enum to a list of field names (must match JSON keys)
+        private List<string> GetFieldNamesFromEnum(ExcludedFields field)
+        {
+            switch (field)
+            {
+                // WebProduct fields
+                case ExcludedFields.ProductPrice:
+                    return new List<string> { "regular_price", "sale_price" };
+
+                case ExcludedFields.ProductName:
+                    return new List<string> { "name" };
+
+                case ExcludedFields.Sku:
+                    return new List<string> { "sku" };
+
+                case ExcludedFields.Stock:
+                    return new List<string> { "stock_quantity", "manage_stock", "stock_status" };
+
+                case ExcludedFields.CategoryOfProduct:
+                    return new List<string> { "categories" };
+
+                // WebCategory fields
+                case ExcludedFields.CategoryName:
+                    return new List<string> { "name" };
+
+                default:
+                    throw new ArgumentException($"Unsupported field: {field}");
             }
         }
 
@@ -162,15 +219,15 @@ namespace WooCommerceApi.Contexts
         //}UpdateParameter("page", _currentPage.ToString())
              //   .AddOrUpdateParameter("per_page", "100");
 
-        public new int CreateProduct(WebProduct entity)
+        public new int CreateProduct(WebProduct entity, List<ExcludedFields> excludedFields = null)
         {
             const string endpoint = "products";
             var wooProduct = WooCommerceConverters.ToWooProduct(entity);
             var request = new RestRequest(endpoint, Method.Post);
-            var createdProduct = SendRequest<WooProduct>(request, wooProduct).Result;
+            var createdProduct = SendRequest<WooProduct>(request, wooProduct, excludedFields).Result;
             return WooCommerceConverters.TryToInt(createdProduct.Id);
         }
-        public new int UpdateProduct(int id, WebProduct entity)
+        public new int UpdateProduct(int id, WebProduct entity, List<ExcludedFields> excludedFields = null)
         {
             var existingProduct = GetProductById(id);
             if (existingProduct == null)
@@ -180,7 +237,7 @@ namespace WooCommerceApi.Contexts
             var endpoint = $"products/{id}";
             var request = new RestRequest(endpoint, Method.Put);
             var updatedProductData = WooCommerceConverters.ToWooProduct(entity);
-            var updatedProduct = SendRequest<WooProduct>(request, updatedProductData);
+            var updatedProduct = SendRequest<WooProduct>(request, updatedProductData, excludedFields);
 
             return WooCommerceConverters.TryToInt(updatedProduct.Id);
         }
@@ -298,16 +355,16 @@ namespace WooCommerceApi.Contexts
             throw new System.NotImplementedException();
         }
 
-        public new int CreateCategory(WebCategory entity)
+        public new int CreateCategory(WebCategory entity, List<ExcludedFields> excludedFields = null)
         {
             const string endPoint = "products/categories";
             var wooCategory = WooCommerceConverters.ToWooCategory(entity);
             var request = new RestRequest(endPoint, Method.Post);
-            var createdCategory = SendRequest<WooCategory>(request, wooCategory).Result;
+            var createdCategory = SendRequest<WooCategory>(request, wooCategory, excludedFields).Result;
             return WooCommerceConverters.TryToInt(createdCategory.Id);
         }
 
-        public new int UpdateCategory(int id, WebCategory entity)
+        public new int UpdateCategory(int id, WebCategory entity, List<ExcludedFields> excludedFields = null)
         {
             var existingCategory = GetCategoryById(id);
             if (existingCategory == null)
@@ -317,7 +374,7 @@ namespace WooCommerceApi.Contexts
             var endPoint = $"products/categories/{id}";
             var request = new RestRequest(endPoint, Method.Put);
             var updatedCategoryData = WooCommerceConverters.ToWooCategory(entity);
-            var updatedCategory = SendRequest<WooCategory>(request, updatedCategoryData);
+            var updatedCategory = SendRequest<WooCategory>(request, updatedCategoryData, excludedFields);
             return WooCommerceConverters.TryToInt(updatedCategory.Id);
         }
 
