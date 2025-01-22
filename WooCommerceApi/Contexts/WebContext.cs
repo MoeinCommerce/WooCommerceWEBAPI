@@ -491,6 +491,34 @@ namespace WooCommerceApi.Contexts
                 new KeyValuePair<int, string>(w.Id, w.FirstName + " " +w.LastName))
                 .ToList();
         }
+        
+        public new IEnumerable<WebProduct> GetVariationProducts(int productId)
+        {
+            string endPoint = $"products/{productId}/variations";
+            var request = new RestRequest(endPoint, Method.Get);
+            var products = SendRequest<IList<WooProduct>>(request).Result;
+            return products.Select(WooCommerceConverters.ToWebProduct);
+        }
+        public new WebProduct GetVariationProduct(int productId, int variationId)
+        {
+            string endPoint = $"products/{productId}/variations/{variationId}";
+            var request = new RestRequest(endPoint, Method.Get);
+            var product = SendRequest<WooProduct>(request).Result;
+            return WooCommerceConverters.ToWebProduct(product);
+        }
+        public new int UpdateVariationProduct(int productId, int variationId, WebProduct entity, List<ExcludedFields> excludedFields = null)
+        {
+            var existingProduct = GetVariationProduct(productId, variationId);
+            if (existingProduct == null)
+            {
+                throw new DoesNotExistException();
+            }
+            var endPoint = $"products/{productId}/variations/{variationId}";
+            var request = new RestRequest(endPoint, Method.Put);
+            var updatedProductData = WooCommerceConverters.ToWooProduct(entity);
+            var updatedProduct = SendRequest<WooProduct>(request, updatedProductData, excludedFields);
+            return WooCommerceConverters.TryToInt(updatedProduct.Id);
+        }
         #endregion
         
         #region Orders
