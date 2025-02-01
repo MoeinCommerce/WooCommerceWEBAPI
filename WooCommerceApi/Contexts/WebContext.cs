@@ -311,14 +311,19 @@ namespace WooCommerceApi.Contexts
                 return true;
             }).Select(WooCommerceConverters.ToWebProduct).ToList();
         }
-        public new IEnumerable<WebProduct> GetAllProductsWithFields(IList<string> fields)
+        public new IEnumerable<WebProduct> GetAllProductsWithFields()
         {
-            if (fields == null || !fields.Any())
-            {
-                return new List<WebProduct>();
-            }
+            var fields = new ProductImportImplementation();
+            // Create a list to hold field values
+            List<string> fieldList = fields.GetType()
+                .GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
+                .Where(prop => prop.PropertyType == typeof(string))
+                .Select(prop => prop.GetValue(fields)?.ToString())
+                .Where(value => !string.IsNullOrEmpty(value))
+                .ToList();
+
             const string endPoint = "products";
-            var fieldsString = string.Join(",", fields);
+            var fieldsString = string.Join(",", fieldList);
             var request = new RestRequest(endPoint, Method.Get);
             request.AddParameter("_fields", fieldsString);
             var results = new List<WooProduct>();
@@ -335,6 +340,46 @@ namespace WooCommerceApi.Contexts
             var request = new RestRequest(endpoint, Method.Get);
             var products = SendRequest<IList<WooProduct>>(request).Result;
             return products.Max(product => WooCommerceConverters.TryToInt(product.Id));
+        }
+        public new IEnumerable<WebProduct> GetVariableProductsBySearch(string searchTerm)
+        {
+            const string endPoint = "products";
+            var request = new RestRequest(endPoint, Method.Get);
+            request.AddParameter("type", "variable");
+            if (searchTerm != null)
+            {
+                request.AddParameter("search", searchTerm);
+            }
+            var results = new List<WooProduct>();
+            return GetAllWithPagination<WooProduct>(request, pageResults =>
+            {
+                results.AddRange(pageResults);
+                return true;
+            }).Select(WooCommerceConverters.ToWebProduct).ToList();
+        }
+        public new IEnumerable<WebProduct> GetVariationProductsByVariableId(int variableId)
+        {
+            string endPoint = $"products/{variableId}/variations";
+            var request = new RestRequest(endPoint, Method.Get);
+            var results = new List<WooProduct>();
+            return GetAllWithPagination<WooProduct>(request, pageResults =>
+            {
+                results.AddRange(pageResults);
+                return true;
+            }).Select(WooCommerceConverters.ToWebProduct).ToList();
+        }
+
+        public new void UpdateVariationProduct(int variableId, WebProduct variationProduct, List<ExcludedFields> excludedFields = null)
+        {
+            // var existingProduct = GetProductById(variableId);
+            // if (existingProduct == null)
+            // {
+            //     throw new DoesNotExistException();
+            // }
+            var endPoint = $"products/{variableId}/variations/{variationProduct.Id}";
+            var request = new RestRequest(endPoint, Method.Put);
+            var updatedProductData = WooCommerceConverters.ToWooProduct(variationProduct);
+            SendRequest<WooProduct>(request, updatedProductData, excludedFields);
         }
 
         public new WebCategory GetCategoryById(int id)
