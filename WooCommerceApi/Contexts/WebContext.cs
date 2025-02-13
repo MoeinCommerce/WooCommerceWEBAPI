@@ -291,8 +291,14 @@ namespace WooCommerceApi.Contexts
             return products.Select(WooCommerceConverters.ToWebProduct)
                 .Where(p => !idsToExclude.Contains(p.Id)).ToList(); 
         }
-        public new IEnumerable<WebProduct> SearchProducts(string searchTerm, int page = 1, int pageSize = 10, int maxPage = 1)
+        public new IEnumerable<WebProduct> SearchProducts(string searchTerm, ProductTypes productType, int page = 1, int pageSize = 10, int maxPage = 1)
         {
+            Utilities.Constants.ProductTypes.TryGetValue(productType, out string productTypeString);
+            if (productTypeString == null) 
+            {
+                return new List<WebProduct>();
+            }
+
             _currentPage = page < 1 ? 1 : page;
             _pageSize = pageSize > 100 || pageSize < 1 ? 100 : pageSize;
             _maxPage = maxPage < 1 ? 1 : maxPage;
@@ -304,6 +310,7 @@ namespace WooCommerceApi.Contexts
             }
             
             request.AddParameter("search", searchTerm);
+            request.AddParameter("type", productTypeString);
             var results = new List<WooProduct>();
             return GetAllWithPagination<WooProduct>(request, pageResults =>
             {
@@ -311,8 +318,14 @@ namespace WooCommerceApi.Contexts
                 return true;
             }).Select(WooCommerceConverters.ToWebProduct).ToList();
         }
-        public new IEnumerable<WebProduct> GetAllProductsWithFields()
+        public new IEnumerable<WebProduct> GetAllProductsWithFields(ProductTypes productType)
         {
+            Utilities.Constants.ProductTypes.TryGetValue(productType, out string productTypeString);
+            if (productTypeString == null)
+            {
+                return new List<WebProduct>();
+            }
+
             var fields = new ProductImportImplementation();
             // Create a list to hold field values
             List<string> fieldList = fields.GetType()
@@ -326,6 +339,7 @@ namespace WooCommerceApi.Contexts
             var fieldsString = string.Join(",", fieldList);
             var request = new RestRequest(endPoint, Method.Get);
             request.AddParameter("_fields", fieldsString);
+            request.AddParameter("type", productTypeString);
             var results = new List<WooProduct>();
             return GetAllWithPagination<WooProduct>(request, pageResults =>
             {
@@ -368,7 +382,6 @@ namespace WooCommerceApi.Contexts
                 return true;
             }).Select(WooCommerceConverters.ToWebProduct).ToList();
         }
-
         public new void UpdateVariationProduct(int variableId, WebProduct variationProduct, List<ExcludedFields> excludedFields = null)
         {
             // var existingProduct = GetProductById(variableId);

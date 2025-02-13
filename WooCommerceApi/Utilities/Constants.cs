@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using WebApi.Models;
 
 namespace WooCommerceApi.Utilities
 {
@@ -21,6 +22,12 @@ namespace WooCommerceApi.Utilities
             {"bankmellat", 6},
             {"WC_ZPal", 7},
             {"WC_IDPay", 8}
+        };
+        public static Dictionary<ProductTypes, string> ProductTypes = new Dictionary<ProductTypes, string>
+        {
+            {WebApi.Models.ProductTypes.Simple, "simple" },
+            {WebApi.Models.ProductTypes.Variable, "variable" },
+            {WebApi.Models.ProductTypes.Variation, "variation" },
         };
     }
 }
