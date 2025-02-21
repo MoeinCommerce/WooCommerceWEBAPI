@@ -18,7 +18,7 @@ namespace WooCommerceApi
 
         public string ExecutablePath => AppDomain.CurrentDomain.BaseDirectory;
 
-        public string Version => "1.0.1";
+        public string Version => "1.0.2";
         public string IconPath => string.Empty;
 
         public List<WebConfig> Configurations =>
@@ -28,13 +28,21 @@ namespace WooCommerceApi
                 {
                     Key = "WooCommerceConsumerKey",
                     DefaultValue = "ck_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-                    DisplayName = "WooCommerce Consumer Key"
+                    DisplayName = "WooCommerce Consumer Key",
+                    Description = "This is the consumer key for the WooCommerce API",
+                    IsRequired = true,
+                    IsProtected = true,
+                    IsReadOnly = false
                 },
                 new WebConfig
                 {
                     Key = "WooCommerceConsumerSecret",
                     DefaultValue = "cs_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-                    DisplayName = "WooCommerce Consumer Secret"
+                    DisplayName = "WooCommerce Consumer Secret",
+                    Description = "This is the consumer secret for the WooCommerce API",
+                    IsRequired = true,
+                    IsProtected = true,
+                    IsReadOnly = false
                 }
             };
     }
