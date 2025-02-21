@@ -133,6 +133,9 @@ namespace WooCommerceApi.Contexts
                 case ExcludedFields.ProductPrice:
                     return new List<string> { "regular_price", "sale_price" };
 
+                case ExcludedFields.ProductDiscount:
+                    return new List<string> { "sale_price" };
+
                 case ExcludedFields.ProductName:
                     return new List<string> { "name" };
 
