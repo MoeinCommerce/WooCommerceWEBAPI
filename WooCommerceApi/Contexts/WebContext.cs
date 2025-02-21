@@ -207,6 +207,14 @@ namespace WooCommerceApi.Contexts
             request.AddOrUpdateParameter("page", _currentPage.ToString());
         }
 
+        public new bool ValidateConnection()
+        {
+            const string endPoint = "products";
+            var request = new RestRequest(endPoint, Method.Get);
+            var response = _client.Execute(request);
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
         /// <summary>
         /// Sets the endpoint with pagination and any additional filters using the QueryFilterBuilder.
         /// </summary>
