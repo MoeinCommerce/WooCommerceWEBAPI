@@ -20,7 +20,7 @@ namespace WooCommerceApi.Helpers
                 Slug = webProduct.Slug,
                 Description = webProduct.Description,
                 RegularPrice = webProduct.RegularPrice.ToString(CultureInfo.InvariantCulture),
-                SalePrice = webProduct.SalePrice?.ToString(),
+                SalePrice = webProduct.SalePrice?.ToString(CultureInfo.InvariantCulture),
                 ManageStock = "true",
                 StockQuantity = webProduct.StockQuantity.ToString(),
                 Sku = webProduct.Sku,
@@ -180,19 +180,19 @@ namespace WooCommerceApi.Helpers
                 Description = wooPaymentMethod.Description
             };
         }
-        
         internal static int TryToInt(object value)
         {
-            return int.TryParse(value?.ToString(), out var result) ? result : 0;
+            return int.TryParse(value?.ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var result) ? result : 0;
         }
 
         internal static decimal TryToDecimal(object value)
         {
-            return decimal.TryParse(value?.ToString(), out var result) ? result : 0m;
+            return decimal.TryParse(value?.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var result) ? result : 0m;
         }
+
         internal static decimal? TryToNullableDecimal(object value)
         {
-            return decimal.TryParse(value?.ToString(), out var result) ? result : (decimal?)null;
+            return decimal.TryParse(value?.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var result) ? result : (decimal?)null;
         }
         public static string GenerateSlug(this string phrase) 
         { 
