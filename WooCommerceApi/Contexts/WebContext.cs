@@ -16,6 +16,7 @@ using WebApi.Exceptions;
 using WebApi.Models;
 using WooCommerceApi.Helpers;
 using WooCommerceApi.Models.WooCommerceModels;
+using WooCommerceApi.Utilities;
 using Exception = System.Exception;
 
 namespace WooCommerceApi.Contexts
@@ -644,6 +645,14 @@ namespace WooCommerceApi.Contexts
             }).Select(WooCommerceConverters.ToWebOrder).ToList();
         }
         
+        public new void UpdateOrderStatus(int orderId, OrderStatus orderStatus)
+        {
+            string endPoint = $"orders/{orderId}";
+            var request = new RestRequest(endPoint, Method.Put);
+            string status = Constants.OrderStatuses[orderStatus];
+            request.AddParameter("status", status);
+            SendRequest<WooOrder>(request);
+        }
         #endregion
 
         #region PaymentMethods

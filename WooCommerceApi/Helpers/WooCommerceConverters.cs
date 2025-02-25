@@ -113,6 +113,7 @@ namespace WooCommerceApi.Helpers
 
         public static WebOrder ToWebOrder(WooOrder wooOrder)
         {
+            OrderStatus orderStatus = Constants.OrderStatuses.FirstOrDefault(x => x.Value == wooOrder.Status).Key;
             Constants.PaymentMethods.TryGetValue(wooOrder.PaymentMethod, out var paymentMethodIntId);
             return new WebOrder
             {
@@ -120,7 +121,7 @@ namespace WooCommerceApi.Helpers
                 CustomerId = wooOrder.CustomerId,
                 PaymentMethodId = paymentMethodIntId,
                 TransactionId = wooOrder.TransactionId,
-                // Status = wooOrder.Status,
+                Status = orderStatus,
                 DateCreated = wooOrder.DateCreated ?? DateTime.Now,
                 DateModified = wooOrder.DateModified ?? DateTime.Now,
                 Currency = wooOrder.Currency,

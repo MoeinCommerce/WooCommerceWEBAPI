@@ -29,5 +29,15 @@ namespace WooCommerceApi.Utilities
             {WebApi.Models.ProductTypes.Variable, "variable" },
             {WebApi.Models.ProductTypes.Variation, "variation" },
         };
+        public static Dictionary<OrderStatus, string> OrderStatuses = new Dictionary<OrderStatus, string>
+        {
+            {WebApi.Models.OrderStatus.Pending, "pending" },
+            {WebApi.Models.OrderStatus.Processing, "processing" },
+            {WebApi.Models.OrderStatus.OnHold, "on-hold" },
+            {WebApi.Models.OrderStatus.Completed, "completed" },
+            {WebApi.Models.OrderStatus.Cancelled, "cancelled" },
+            {WebApi.Models.OrderStatus.Refunded, "refunded" },
+            {WebApi.Models.OrderStatus.Failed, "failed" },
+        };
     }
 }
