@@ -38,6 +38,7 @@ namespace WooCommerceApi.Utilities
             {WebApi.Models.OrderStatus.Cancelled, "cancelled" },
             {WebApi.Models.OrderStatus.Refunded, "refunded" },
             {WebApi.Models.OrderStatus.Failed, "failed" },
+            {WebApi.Models.OrderStatus.Other, "others" }
         };
     }
 }
