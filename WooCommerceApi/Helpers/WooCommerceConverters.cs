@@ -115,6 +115,11 @@ namespace WooCommerceApi.Helpers
         {
             OrderStatus orderStatus = Constants.OrderStatuses.FirstOrDefault(x => x.Value == wooOrder.Status).Key;
             Constants.PaymentMethods.TryGetValue(wooOrder.PaymentMethod, out var paymentMethodIntId);
+
+            double totalTax = wooOrder.TotalTax;
+            double sumOfSubTaxes = wooOrder.LineItems.Sum(x => x.SubtotalTax);
+            bool isTaxAfterDiscount = totalTax != sumOfSubTaxes;
+
             return new WebOrder
             {
                 Id = wooOrder.Id,
@@ -167,7 +172,7 @@ namespace WooCommerceApi.Helpers
                     UnitPrice = item.Quantity == 0 ? item.Subtotal : item.Subtotal / item.Quantity,
                     VariationId = item.VariationId,
                     UnitDiscount = ((item.Subtotal - item.Total) / item.Quantity),
-                    UnitTax = item.Quantity == 0 ? item.TotalTax : item.TotalTax / item.Quantity,
+                    UnitTax = (isTaxAfterDiscount ? item.TotalTax : item.SubtotalTax) / item.Quantity
                 }).ToList()
             };
         }
