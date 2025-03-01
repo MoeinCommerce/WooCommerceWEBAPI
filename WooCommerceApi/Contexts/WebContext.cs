@@ -604,6 +604,15 @@ namespace WooCommerceApi.Contexts
             const string endPoint = "orders";
             var request = new RestRequest(endPoint, Method.Get);
 
+            if (orderStatuses != null && orderStatuses.Any())
+            {
+                string orderStatusString = string.Join("", orderStatuses.Select(orderStatus => Constants.OrderStatuses[orderStatus]));
+                request.AddParameter("status", orderStatusString);
+            }
+            else
+            {
+                return new List<WebOrder>();
+            }
             if (idsToExclude != null && idsToExclude.Any())
             {
                 string idsToExcludeString = string.Join(",", idsToExclude);
@@ -613,11 +622,7 @@ namespace WooCommerceApi.Contexts
             {
                 request.AddParameter("search", searchTerm);
             }
-            if (orderStatuses != null && orderStatuses.Count() > 0)
-            {
-                string orderStatusesString = string.Join(",", orderStatuses);
-                request.AddParameter("status", orderStatusesString);
-            }
+
             if (customerId > 0)
             {
                 request.AddParameter("customer", customerId.Value);
