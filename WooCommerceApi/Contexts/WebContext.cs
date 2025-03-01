@@ -561,8 +561,15 @@ namespace WooCommerceApi.Contexts
                 new KeyValuePair<int, string>(w.Id, w.FirstName + " " +w.LastName))
                 .ToList();
         }
+        public new WebCustomer GetCustomerById(int id)
+        {
+            var endPoint = $"customers/{id}";
+            var request = new RestRequest(endPoint, Method.Get);
+            var wooCustomer = SendRequest<WooCustomer>(request).Result;
+            return WooCommerceConverters.ToWebCustomer(wooCustomer);
+        }
         #endregion
-        
+
         #region Orders
 
         public new IEnumerable<WebOrder> GetAllOrdersExcludeById(IEnumerable<int> idsToExclude, DateTime? startDate, DateTime? endDate)
