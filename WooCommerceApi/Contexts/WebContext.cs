@@ -588,7 +588,7 @@ namespace WooCommerceApi.Contexts
         public new IEnumerable<WebOrder> GetOrdersBySearch(
             IEnumerable<int> idsToExclude,
             string searchTerm,
-            OrderStatus? orderStatus,
+            IEnumerable<OrderStatus> orderStatuses,
             int? customerId,
             decimal totalMin,
             decimal totalMax,
@@ -606,17 +606,17 @@ namespace WooCommerceApi.Contexts
 
             if (idsToExclude != null && idsToExclude.Any())
             {
-                var idsToExcludeString = string.Join(",", idsToExclude);
+                string idsToExcludeString = string.Join(",", idsToExclude);
                 request.AddParameter("exclude", idsToExcludeString);
             }
             if (searchTerm != null)
             {
                 request.AddParameter("search", searchTerm);
             }
-            if (orderStatus != null)
+            if (orderStatuses != null && orderStatuses.Count() > 0)
             {
-                string status = Constants.OrderStatuses[orderStatus ?? OrderStatus.Completed];
-                request.AddParameter("status", status);
+                string orderStatusesString = string.Join(",", orderStatuses);
+                request.AddParameter("status", orderStatusesString);
             }
             if (customerId > 0)
             {
