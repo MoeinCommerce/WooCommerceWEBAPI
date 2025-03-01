@@ -606,7 +606,7 @@ namespace WooCommerceApi.Contexts
 
             if (orderStatuses != null && orderStatuses.Any())
             {
-                string orderStatusString = string.Join("", orderStatuses.Select(orderStatus => Constants.OrderStatuses[orderStatus]));
+                string orderStatusString = string.Join(",", orderStatuses.Select(orderStatus => Constants.OrderStatuses[orderStatus]));
                 request.AddParameter("status", orderStatusString);
             }
             else
