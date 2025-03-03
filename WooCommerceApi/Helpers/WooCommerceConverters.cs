@@ -131,7 +131,11 @@ namespace WooCommerceApi.Helpers
             {
                 Id = wooOrder.Id,
                 CustomerId = wooOrder.CustomerId,
-                PaymentMethodId = paymentMethodIntId,
+                PaymentMethod = new WebPaymentMethod
+                {
+                    Id = paymentMethodIntId,
+                    Title = wooOrder.PaymentMethodTitle,
+                },
                 TransactionId = wooOrder.TransactionId,
                 Status = orderStatus,
                 DateCreated = wooOrder.DateCreated ?? DateTime.Now,

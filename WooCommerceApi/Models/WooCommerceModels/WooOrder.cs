@@ -20,7 +20,10 @@ namespace WooCommerceApi.Models.WooCommerceModels
         
         [JsonProperty("payment_method")]
         public string PaymentMethod { get; set; }
-        
+
+        [JsonProperty("payment_method_title")]
+        public string PaymentMethodTitle { get; set; }
+
         [JsonProperty("status")]
         public string Status { get; set; }
         
