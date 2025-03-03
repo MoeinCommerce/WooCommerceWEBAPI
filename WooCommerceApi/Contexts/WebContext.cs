@@ -197,7 +197,7 @@ namespace WooCommerceApi.Contexts
         private void ResetPage(RestRequest request)
         {
             _currentPage = 1;
-            request.AddOrUpdateParameter("size", _pageSize.ToString());
+            request.AddOrUpdateParameter("per_page", _pageSize.ToString());
             request.AddOrUpdateParameter("page", _currentPage.ToString());
         }
 
@@ -207,7 +207,7 @@ namespace WooCommerceApi.Contexts
         private void NextPage(RestRequest request)
         {
             _currentPage++;
-            request.AddOrUpdateParameter("size", _pageSize.ToString());
+            request.AddOrUpdateParameter("per_page", _pageSize.ToString());
             request.AddOrUpdateParameter("page", _currentPage.ToString());
         }
 
