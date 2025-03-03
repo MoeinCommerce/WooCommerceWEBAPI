@@ -611,6 +611,9 @@ namespace WooCommerceApi.Contexts
             const string endPoint = "orders";
             var request = new RestRequest(endPoint, Method.Get);
 
+            request.AddOrUpdateParameter("per_page", _pageSize.ToString());
+            request.AddOrUpdateParameter("page", _currentPage.ToString());
+
             if (orderStatuses != null && orderStatuses.Any())
             {
                 string orderStatusString = string.Join(",", orderStatuses.Select(orderStatus => Constants.OrderStatuses[orderStatus]));
@@ -650,12 +653,9 @@ namespace WooCommerceApi.Contexts
             {
                 request.AddParameter("before", endDate.ToString("o")); // ISO 8601 format
             }
-            var results = new List<WooOrder>();
-            return GetAllWithPagination<WooOrder>(request, pageResults =>
-            {
-                results.AddRange(pageResults);
-                return true;
-            }).Select(WooCommerceConverters.ToWebOrder).ToList();
+            var results = SendRequest<IList<WooOrder>>(request).Result;
+
+            return results.Select(WooCommerceConverters.ToWebOrder).ToList();
         }
         
         public new void UpdateOrderStatus(int orderId, OrderStatus orderStatus)
