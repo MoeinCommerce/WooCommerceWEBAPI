@@ -327,8 +327,8 @@ namespace WooCommerceApi.Contexts
 
             request.AddParameter("search", searchTerm);
             request.AddParameter("type", productTypeString);
-            var results = new List<WooProduct>();
 
+            var results = SendRequest<IList<WooProduct>>(request).Result;
             return results.Select(WooCommerceConverters.ToWebProduct).ToList();
         }
         public new IEnumerable<WebProduct> GetAllProductsWithFields(ProductTypes productType)
