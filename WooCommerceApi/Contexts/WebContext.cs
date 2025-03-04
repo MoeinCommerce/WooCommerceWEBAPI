@@ -320,15 +320,16 @@ namespace WooCommerceApi.Contexts
             {
                 return new List<WebProduct>();
             }
-            
+
+
+            request.AddOrUpdateParameter("per_page", _pageSize.ToString());
+            request.AddOrUpdateParameter("page", _currentPage.ToString());
+
             request.AddParameter("search", searchTerm);
             request.AddParameter("type", productTypeString);
             var results = new List<WooProduct>();
-            return GetAllWithPagination<WooProduct>(request, pageResults =>
-            {
-                results.AddRange(pageResults);
-                return true;
-            }).Select(WooCommerceConverters.ToWebProduct).ToList();
+
+            return results.Select(WooCommerceConverters.ToWebProduct).ToList();
         }
         public new IEnumerable<WebProduct> GetAllProductsWithFields(ProductTypes productType)
         {
@@ -376,8 +377,6 @@ namespace WooCommerceApi.Contexts
             {
                 request.AddParameter("search", searchTerm);
             }
-            request.AddParameter("_fields", "id");
-            request.AddParameter("_fields", "name");
 
             var results = new List<WooProduct>();
             return GetAllWithPagination<WooProduct>(request, pageResults =>
