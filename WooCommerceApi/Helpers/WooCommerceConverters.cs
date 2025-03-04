@@ -148,7 +148,7 @@ namespace WooCommerceApi.Helpers
                 Shipping = MapCustomer(wooOrder.Shipping),
                 ShippingDetail = new WebShippingDetail
                 {
-                    VehicleId = firstShippingLine?.Id ?? 0,
+                    VehicleId = int.TryParse(firstShippingLine?.MethodId, out int methodId) ? methodId : 0,
                     VehicleName = firstShippingLine?.MethodTitle,
                     VehiclePrice = double.TryParse(firstShippingLine?.Total, out double shippingTotal) ? shippingTotal : 0
                 },

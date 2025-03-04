@@ -117,10 +117,19 @@ namespace WooCommerceApi.Models.WooCommerceModels
 
     public class WooOrderShippingLine
     {
+        [JsonProperty("id")]
         public int Id { get; set; }
+
+        [JsonProperty("method_title")]
         public string MethodTitle { get; set; }
+
+        [JsonProperty("method_id")]
         public string MethodId { get; set; }
+
+        [JsonProperty("total")]
         public string Total { get; set; }
+
+        [JsonProperty("total_tax")]
         public string TotalTax { get; set; }
     }
 
