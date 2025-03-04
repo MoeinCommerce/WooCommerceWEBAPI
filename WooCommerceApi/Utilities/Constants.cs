@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using WebApi.Models;
+using WooCommerceApi.Models.WooCommerceModels;
 
 namespace WooCommerceApi.Utilities
 {
@@ -40,5 +41,6 @@ namespace WooCommerceApi.Utilities
             {WebApi.Models.OrderStatus.Failed, "failed" },
             {WebApi.Models.OrderStatus.Other, "others" }
         };
+        public static string OrderPath => "wp-admin/admin.php?page=wc-orders&action=edit&id={0}";
     }
 }

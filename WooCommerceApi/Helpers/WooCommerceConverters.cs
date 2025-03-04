@@ -132,6 +132,7 @@ namespace WooCommerceApi.Helpers
             return new WebOrder
             {
                 Id = wooOrder.Id,
+                OrderPath = string.Format(Constants.OrderPath, wooOrder.Id),
                 CustomerId = wooOrder.CustomerId,
                 PaymentMethod = new WebPaymentMethod
                 {
