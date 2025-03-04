@@ -127,6 +127,8 @@ namespace WooCommerceApi.Helpers
             double sumOfSubTaxes = wooOrder.LineItems.Sum(x => x.SubtotalTax);
             bool isTaxAfterDiscount = totalTax != sumOfSubTaxes;
 
+            var firstShippingLine = wooOrder.ShippingLines?.FirstOrDefault();
+
             return new WebOrder
             {
                 Id = wooOrder.Id,
@@ -142,38 +144,13 @@ namespace WooCommerceApi.Helpers
                 DateModified = wooOrder.DateModified ?? DateTime.Now,
                 Currency = wooOrder.Currency,
                 ShippingTotal = wooOrder.ShippingTotal,
-                // OrderTax = wooOrder.TotalTax,
-                Billing = new WebCustomer
+                Billing = MapCustomer(wooOrder.Billing),
+                Shipping = MapCustomer(wooOrder.Shipping),
+                ShippingDetail = new WebShippingDetail
                 {
-                    FirstName = wooOrder.Billing.FirstName,
-                    LastName = wooOrder.Billing.LastName,
-                    Email = wooOrder.Billing.Email,
-                    PhoneNumbers = new List<string>
-                    {
-                        wooOrder.Billing.Phone
-                    },
-                    Address1 = wooOrder.Billing.Address1,
-                    Address2 = wooOrder.Billing.Address2,
-                    City = wooOrder.Billing.City,
-                    State = wooOrder.Billing.State,
-                    Postcode = wooOrder.Billing.Postcode,
-                    Country = wooOrder.Billing.Country
-                },
-                Shipping = new WebCustomer
-                {
-                    FirstName = wooOrder.Shipping.FirstName,
-                    LastName = wooOrder.Shipping.LastName,
-                    Email = wooOrder.Shipping.Email,
-                    PhoneNumbers = new List<string>
-                    {
-                        wooOrder.Shipping.Phone
-                    },
-                    Address1 = wooOrder.Shipping.Address1,
-                    Address2 = wooOrder.Shipping.Address2,
-                    City = wooOrder.Shipping.City,
-                    State = wooOrder.Shipping.State,
-                    Postcode = wooOrder.Shipping.Postcode,
-                    Country = wooOrder.Shipping.Country
+                    VehicleId = firstShippingLine?.Id ?? 0,
+                    VehicleName = firstShippingLine?.MethodTitle,
+                    VehiclePrice = double.TryParse(firstShippingLine?.Total, out double shippingTotal) ? shippingTotal : 0
                 },
                 OrderItems = wooOrder.LineItems.Select(item => new WebOrderDetail
                 {
@@ -185,6 +162,22 @@ namespace WooCommerceApi.Helpers
                     UnitDiscount = ((item.Subtotal - item.Total) / item.Quantity),
                     UnitTax = (isTaxAfterDiscount ? item.TotalTax : item.SubtotalTax) / item.Quantity
                 }).ToList()
+            };
+        }
+        private static WebCustomer MapCustomer(WooCustomer customer)
+        {
+            return new WebCustomer
+            {
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                Email = customer.Email,
+                PhoneNumbers = new List<string> { customer.Phone },
+                Address1 = customer.Address1,
+                Address2 = customer.Address2,
+                City = customer.City,
+                State = customer.State,
+                Postcode = customer.Postcode,
+                Country = customer.Country
             };
         }
         public static WebPaymentMethod ToWebPaymentMethod(WooPaymentMethod wooPaymentMethod)
