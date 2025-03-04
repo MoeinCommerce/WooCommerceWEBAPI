@@ -376,6 +376,9 @@ namespace WooCommerceApi.Contexts
             {
                 request.AddParameter("search", searchTerm);
             }
+            request.AddParameter("_fields", "id");
+            request.AddParameter("_fields", "name");
+
             var results = new List<WooProduct>();
             return GetAllWithPagination<WooProduct>(request, pageResults =>
             {
