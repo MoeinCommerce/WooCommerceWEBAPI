@@ -77,7 +77,7 @@ namespace WooCommerceApi.Utilities
             { "HRZ", "Hormozgan (هرمزگان)" },
             { "SBN", "Sistan and Baluchestan (سیستان و بلوچستان)" }
         };
-        Dictionary<string, string> countryDictionary = new Dictionary<string, string>
+        public static Dictionary<string, string> CountryDictionary = new Dictionary<string, string>
         {
             { "AF", "Afghanistan" }, { "AX", "Åland Islands" }, { "AL", "Albania" },
             { "DZ", "Algeria" }, { "AS", "American Samoa" }, { "AD", "Andorra" },

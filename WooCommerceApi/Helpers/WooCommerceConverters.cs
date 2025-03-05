@@ -126,7 +126,7 @@ namespace WooCommerceApi.Helpers
             double totalTax = wooOrder.TotalTax;
             double sumOfSubTaxes = wooOrder.LineItems.Sum(x => x.SubtotalTax);
             bool isTaxAfterDiscount = totalTax != sumOfSubTaxes;
-
+            
             var firstShippingLine = wooOrder.ShippingLines?.FirstOrDefault();
 
             return new WebOrder
@@ -167,6 +167,14 @@ namespace WooCommerceApi.Helpers
         }
         private static WebCustomer MapCustomer(WooCustomer customer)
         {
+            // Get country name from dictionary, if not found assign the original value
+            string country = Constants.CountryDictionary.TryGetValue(customer.Country, out string countryName)
+                             ? countryName : customer.Country;
+
+            // Get state name from dictionary, if not found assign the original value
+            string state = Constants.StateDictionary.TryGetValue(customer.State, out string stateName)
+                           ? stateName : customer.State;
+
             return new WebCustomer
             {
                 FirstName = customer.FirstName,
@@ -175,12 +183,13 @@ namespace WooCommerceApi.Helpers
                 PhoneNumbers = new List<string> { customer.Phone },
                 Address1 = customer.Address1,
                 Address2 = customer.Address2,
+                Country = country,
+                State = state,
                 City = customer.City,
-                State = customer.State,
-                Postcode = customer.Postcode,
-                Country = customer.Country
+                Postcode = customer.Postcode
             };
         }
+
         public static WebPaymentMethod ToWebPaymentMethod(WooPaymentMethod wooPaymentMethod)
         {
             Constants.PaymentMethods.TryGetValue(wooPaymentMethod.Id, out var paymentMethodIntId);
