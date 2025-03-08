@@ -134,6 +134,7 @@ namespace WooCommerceApi.Helpers
                 Id = wooOrder.Id,
                 OrderPath = string.Format(Constants.OrderPath, wooOrder.Id),
                 CustomerId = wooOrder.CustomerId,
+                CustomerNote = wooOrder.CustomerNote,
                 PaymentMethod = new WebPaymentMethod
                 {
                     Id = paymentMethodIntId,
@@ -160,7 +161,7 @@ namespace WooCommerceApi.Helpers
                     Quantity = item.Quantity,
                     UnitPrice = item.Quantity == 0 ? item.Subtotal : item.Subtotal / item.Quantity,
                     VariationId = item.VariationId,
-                    UnitDiscount = ((item.Subtotal - item.Total) / item.Quantity),
+                    UnitDiscount = (item.Subtotal - item.Total) / item.Quantity,
                     UnitTax = (isTaxAfterDiscount ? item.TotalTax : item.SubtotalTax) / item.Quantity
                 }).ToList()
             };

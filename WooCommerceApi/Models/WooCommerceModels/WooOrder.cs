@@ -14,7 +14,10 @@ namespace WooCommerceApi.Models.WooCommerceModels
 
         [JsonProperty("customer_id")]
         public int CustomerId { get; set; }
-        
+
+        [JsonProperty("customer_note")]
+        public string CustomerNote { get; set; }
+
         [JsonProperty("transaction_id")]
         public string TransactionId { get; set; }
         
