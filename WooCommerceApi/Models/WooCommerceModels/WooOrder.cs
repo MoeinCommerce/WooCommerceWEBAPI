@@ -68,8 +68,8 @@ namespace WooCommerceApi.Models.WooCommerceModels
         
         [JsonProperty("tax_lines")] 
         public List<WooOrderTaxLine> TaxLines { get; set; }
-    }
 
+    }
     public class WooOrderLineItem
     {
         [JsonProperty("id")]

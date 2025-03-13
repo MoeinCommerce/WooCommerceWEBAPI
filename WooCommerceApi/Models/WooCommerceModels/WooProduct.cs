@@ -30,9 +30,6 @@ namespace WooCommerceApi.Models.WooCommerceModels
         [JsonProperty("type")]
         public string Type { get; set; }
 
-        // [JsonProperty("status")]
-        // public string Status { get; set; }
-        
         [JsonProperty("description")]
         public string Description { get; set; }
 
@@ -68,7 +65,25 @@ namespace WooCommerceApi.Models.WooCommerceModels
 
         [JsonProperty("categories")]
         public List<MinimalWooCategory> Categories { get; set; } // Replaced with WooProductCategory class
+
+        [JsonProperty("attributes")]
+        public List<WooAttribute> Attributes { get; set; }
     }
+    public class WooAttribute
+    {
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("slug")]
+        public string Slug { get; set; }
+
+        [JsonProperty("option")]
+        public string Option { get; set; }
+    }
+
 
     public class WooProductDimensions
     {

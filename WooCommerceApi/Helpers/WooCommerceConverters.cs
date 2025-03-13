@@ -49,6 +49,12 @@ namespace WooCommerceApi.Helpers
                 Categories =  wooProduct.Categories?.Select(c => new WebCategory
                 {
                     Id = c.Id
+                }).ToList(),
+                Attributes = wooProduct?.Attributes?.Select(w => new WebApi.Models.Attribute
+                {
+                    Id = w.Id,
+                    Name = w.Name,
+                    Value = w.Option
                 }).ToList()
             };
         }
