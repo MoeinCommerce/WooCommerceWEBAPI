@@ -116,6 +116,7 @@ namespace WooCommerceApi.Contexts
             }
             catch (InvalidFieldException ex)
             {
+                Console.WriteLine(ex.Message);
                 throw;
             }
             catch (Exception ex)
@@ -421,12 +422,6 @@ namespace WooCommerceApi.Contexts
         {
             throw new System.NotImplementedException();
         }
-
-        public new IList<WebCategory> GetAllCategoriesExcludingIds(IEnumerable<int> idsToExclude)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public new int CreateCategory(WebCategory entity, List<ExcludedFields> excludedFields = null)
         {
             const string endPoint = "products/categories";
@@ -495,7 +490,7 @@ namespace WooCommerceApi.Contexts
         
         #region Customer
         
-        public IEnumerable<WebCustomer> SearchCustomers(string searchTerm, int page = 1, int pageSize = 10, int maxPage = 1)
+        public new IEnumerable<WebCustomer> SearchCustomers(string searchTerm, int page = 1, int pageSize = 10, int maxPage = 1)
         {   
             _currentPage = page < 1 ? 1 : page;
             _pageSize = pageSize > 100 || pageSize < 1 ? 100 : pageSize;
