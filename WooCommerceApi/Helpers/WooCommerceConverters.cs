@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using WebApi.Models;
 using WooCommerceApi.Models.WooCommerceModels;
 using WooCommerceApi.Utilities;
+using System.Web;
 
 namespace WooCommerceApi.Helpers
 {
@@ -53,8 +54,8 @@ namespace WooCommerceApi.Helpers
                 Attributes = wooProduct?.Attributes?.Select(w => new WebApi.Models.Attribute
                 {
                     Id = w.Id,
-                    Name = w.Name,
-                    Value = w.Option
+                    Name = HttpUtility.UrlDecode(w.Name),
+                    Value = HttpUtility.UrlDecode(w.Option)
                 }).ToList()
             };
         }
