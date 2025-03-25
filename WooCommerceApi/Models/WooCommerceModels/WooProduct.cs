@@ -60,9 +60,6 @@ namespace WooCommerceApi.Models.WooCommerceModels
         [JsonProperty("stock_status")]
         public string StockStatus { get; set; }
 
-        [JsonProperty("weight")]
-        public string Weight { get; set; }
-
         [JsonProperty("categories")]
         public List<MinimalWooCategory> Categories { get; set; } // Replaced with WooProductCategory class
 
