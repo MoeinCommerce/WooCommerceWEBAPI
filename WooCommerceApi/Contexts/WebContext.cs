@@ -150,6 +150,9 @@ namespace WooCommerceApi.Contexts
                 case ExcludedFields.ProductAttributes:
                     return new List<string> { "attributes" };
 
+                case ExcludedFields.ProductDescription:
+                    return new List<string> { "description", "short_description" };
+
                 case ExcludedFields.CategoryOfProduct:
                     return new List<string> { "categories" };
 
