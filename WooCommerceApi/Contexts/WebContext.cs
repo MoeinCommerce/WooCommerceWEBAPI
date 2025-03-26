@@ -147,6 +147,9 @@ namespace WooCommerceApi.Contexts
                 case ExcludedFields.Stock:
                     return new List<string> { "stock_quantity", "manage_stock", "stock_status" };
 
+                case ExcludedFields.ProductAttributes:
+                    return new List<string> { "attributes" };
+
                 case ExcludedFields.CategoryOfProduct:
                     return new List<string> { "categories" };
 
@@ -246,6 +249,14 @@ namespace WooCommerceApi.Contexts
             if (existingProduct == null)
             {
                 throw new DoesNotExistException();
+            }
+            if (excludedFields == null)
+            {
+                excludedFields = new List<ExcludedFields>();
+            }
+            if (!excludedFields.Contains(ExcludedFields.ProductAttributes))
+            {
+                excludedFields.Add(ExcludedFields.ProductAttributes);
             }
             var endpoint = $"products/{id}";
             var request = new RestRequest(endpoint, Method.Put);
@@ -404,6 +415,18 @@ namespace WooCommerceApi.Contexts
             // {
             //     throw new DoesNotExistException();
             // }
+            if (excludedFields == null)
+            {
+                excludedFields = new List<ExcludedFields>();
+            }
+            if (!excludedFields.Contains(ExcludedFields.ProductName))
+            {
+                excludedFields.Add(ExcludedFields.ProductName);
+            }
+            if (!excludedFields.Contains(ExcludedFields.ProductAttributes))
+            {
+                excludedFields.Add(ExcludedFields.ProductAttributes);
+            }
             var endPoint = $"products/{variableId}/variations/{variationProduct.Id}";
             var request = new RestRequest(endPoint, Method.Put);
             var updatedProductData = WooCommerceConverters.ToWooProduct(variationProduct);

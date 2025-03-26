@@ -28,7 +28,7 @@ namespace WooCommerceApi.Helpers
                 Categories = webProduct.Categories?.Select(c => new MinimalWooCategory
                 {
                     Id = c.Id
-                }).ToList()
+                }).ToList(),
             };
         }
 
