@@ -15,9 +15,6 @@ namespace WooCommerceApi.Models.WooCommerceModels
         [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("slug")]
-        public string Slug { get; set; }
-
         [JsonProperty("date_created")]
         public DateTime? DateCreated { get; set; }
         

@@ -18,7 +18,6 @@ namespace WooCommerceApi.Helpers
             {
                 Id = webProduct.Id,
                 Name = webProduct.Name,
-                Slug = webProduct.Slug,
                 Description = webProduct.Description,
                 RegularPrice = webProduct.RegularPrice.ToString(CultureInfo.InvariantCulture),
                 SalePrice = webProduct.SalePrice?.ToString(CultureInfo.InvariantCulture),
@@ -38,7 +37,6 @@ namespace WooCommerceApi.Helpers
             {
                 Id = TryToInt(wooProduct.Id),
                 Name = wooProduct.Name,
-                Slug = wooProduct.Slug,
                 DateCreated = wooProduct.DateCreated ?? DateTime.Now,
                 DateModified = wooProduct.DateModified ?? DateTime.Now,
                 // Status = wooProduct.Status,
