@@ -30,10 +30,10 @@ namespace WooCommerceApi.Models.WooCommerceModels
         [JsonProperty("status")]
         public string Status { get; set; }
         
-        [JsonProperty("date_created")]
+        [JsonProperty("date_paid_gmt")]
         public DateTime? DateCreated { get; set; }
         
-        [JsonProperty("date_modified")]
+        [JsonProperty("date_paid_gmt")]
         public DateTime? DateModified { get; set; }
         
         [JsonProperty("currency")]
