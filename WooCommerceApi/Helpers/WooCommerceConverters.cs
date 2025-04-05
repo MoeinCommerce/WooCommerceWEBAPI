@@ -148,7 +148,6 @@ namespace WooCommerceApi.Helpers
                 TransactionId = wooOrder.TransactionId,
                 Status = orderStatus,
                 DateCreated = wooOrder.DateCreated ?? DateTime.Now,
-                DateModified = wooOrder.DateModified ?? DateTime.Now,
                 Currency = wooOrder.Currency,
                 ShippingTotal = wooOrder.ShippingTotal,
                 Billing = MapCustomer(wooOrder.Billing),
