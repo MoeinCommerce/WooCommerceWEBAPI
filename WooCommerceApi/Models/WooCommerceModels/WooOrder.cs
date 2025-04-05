@@ -33,9 +33,6 @@ namespace WooCommerceApi.Models.WooCommerceModels
         [JsonProperty("date_paid_gmt")]
         public DateTime? DateCreated { get; set; }
         
-        [JsonProperty("date_paid_gmt")]
-        public DateTime? DateModified { get; set; }
-        
         [JsonProperty("currency")]
         public string Currency { get; set; }
         
