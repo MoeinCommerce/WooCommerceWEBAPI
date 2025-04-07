@@ -28,6 +28,7 @@ namespace WooCommerceApi.Helpers
                 {
                     Id = c.Id
                 }).ToList(),
+                Status = "draft"
             };
         }
 

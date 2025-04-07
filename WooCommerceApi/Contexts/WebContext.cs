@@ -156,6 +156,9 @@ namespace WooCommerceApi.Contexts
                 case ExcludedFields.CategoryOfProduct:
                     return new List<string> { "categories" };
 
+                case ExcludedFields.DraftStatus:
+                    return new List<string> { "status" };
+
                 // WebCategory fields
                 case ExcludedFields.CategoryName:
                     return new List<string> { "name" };
@@ -260,6 +263,10 @@ namespace WooCommerceApi.Contexts
             if (!excludedFields.Contains(ExcludedFields.ProductAttributes))
             {
                 excludedFields.Add(ExcludedFields.ProductAttributes);
+            }
+            if (!excludedFields.Contains(ExcludedFields.DraftStatus))
+            {
+                excludedFields.Add(ExcludedFields.DraftStatus);
             }
             var endpoint = $"products/{id}";
             var request = new RestRequest(endpoint, Method.Put);
@@ -413,11 +420,6 @@ namespace WooCommerceApi.Contexts
         }
         public new void UpdateVariationProduct(int variableId, WebProduct variationProduct, List<ExcludedFields> excludedFields = null)
         {
-            // var existingProduct = GetProductById(variableId);
-            // if (existingProduct == null)
-            // {
-            //     throw new DoesNotExistException();
-            // }
             if (excludedFields == null)
             {
                 excludedFields = new List<ExcludedFields>();
@@ -429,6 +431,10 @@ namespace WooCommerceApi.Contexts
             if (!excludedFields.Contains(ExcludedFields.ProductAttributes))
             {
                 excludedFields.Add(ExcludedFields.ProductAttributes);
+            }
+            if (!excludedFields.Contains(ExcludedFields.DraftStatus))
+            {
+                excludedFields.Add(ExcludedFields.DraftStatus);
             }
             var endPoint = $"products/{variableId}/variations/{variationProduct.Id}";
             var request = new RestRequest(endPoint, Method.Put);
