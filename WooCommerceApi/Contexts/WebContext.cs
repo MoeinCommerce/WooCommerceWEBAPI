@@ -1,4 +1,4 @@
-
+﻿
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -616,9 +616,12 @@ namespace WooCommerceApi.Contexts
             {
                 request.AddParameter("before", endDate.Value.ToString("o")); // ISO 8601 format
             }
-
-            var orders = SendRequest<IList<WooOrder>>(request).Result;
-            return orders.Select(WooCommerceConverters.ToWebOrder);
+            var results = new List<WooOrder>();
+            return GetAllWithPagination<WooOrder>(request, pageResults =>
+            {
+                results.AddRange(pageResults);
+                return true;
+            }).Select(WooCommerceConverters.ToWebOrder).ToList();
         }
         
         public new IEnumerable<WebOrder> GetOrdersBySearch(
@@ -646,9 +649,9 @@ namespace WooCommerceApi.Contexts
             if (orderStatuses != null && orderStatuses.Any())
             {
                 if (!orderStatuses.Contains(OrderStatus.Other))
-            {
-                string orderStatusString = string.Join(",", orderStatuses.Select(orderStatus => Constants.OrderStatuses[orderStatus]));
-                request.AddParameter("status", orderStatusString);
+                {
+                    string orderStatusString = string.Join(",", orderStatuses.Select(orderStatus => Constants.OrderStatuses[orderStatus]));
+                    request.AddParameter("status", orderStatusString);
                 }
             }
             else
@@ -686,7 +689,6 @@ namespace WooCommerceApi.Contexts
                 request.AddParameter("before", endDate.ToString("o")); // ISO 8601 format
             }
             var results = SendRequest<IList<WooOrder>>(request).Result;
-
             return results.Select(WooCommerceConverters.ToWebOrder).ToList();
         }
         
