@@ -119,13 +119,14 @@ namespace WooCommerceApi.Helpers
 
         public static WebOrder ToWebOrder(WooOrder wooOrder)
         {
-            OrderStatus orderStatus = Constants.OrderStatuses
-                .FirstOrDefault(x => x.Value == wooOrder.Status).Key;
-
-            if (!Constants.OrderStatuses.ContainsKey(orderStatus))
+            var orderStatus = Constants.OrderStatuses
+                .FirstOrDefault(x => x.Value == wooOrder.Status)
+                .Key;
+            if (!Constants.OrderStatuses.Any(o => o.Value == wooOrder.Status))
             {
                 orderStatus = OrderStatus.Other;
             }
+
 
             Constants.PaymentMethods.TryGetValue(wooOrder.PaymentMethod, out var paymentMethodIntId);
 
