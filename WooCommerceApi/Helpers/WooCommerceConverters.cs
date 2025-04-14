@@ -148,6 +148,7 @@ namespace WooCommerceApi.Helpers
                 },
                 TransactionId = wooOrder.TransactionId,
                 Status = orderStatus,
+                StatusText = wooOrder.Status,
                 DateCreated = wooOrder.DateCreated ?? DateTime.Now,
                 DateModified = wooOrder.DateModified ?? DateTime.Now,
                 Currency = wooOrder.Currency,
