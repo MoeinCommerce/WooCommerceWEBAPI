@@ -1,81 +1,92 @@
 @echo off
 :: Print start time
 echo Started at -------------------------- %time% --------------------------
+
 :: Using utf-8 in CMD
 chcp 65001 >nul 2>&1
 
+:: -------------------------- BUILD TYPE PROMPT ---------------------------
+:chooseBuildType
+set "buildTypeInput="
+set /p buildTypeInput=Enter build type ([P]ublish / [B]eta) [default: P]: 
+
+if /i "%buildTypeInput%"=="" (
+    set "buildType=publish"
+) else if /i "%buildTypeInput%"=="p" (
+    set "buildType=publish"
+) else if /i "%buildTypeInput%"=="b" (
+    set "buildType=beta"
+) else (
+    echo Invalid input. Please enter 'P' for publish or 'B' for beta.
+    goto chooseBuildType
+)
 
 :: ------------------------------- VARIABLES -------------------------------
-:: please override everythings in <> """ not anything else """
-:: Example: set "sln=<YOUR_SOLUTION_NAME>" => set "sln=MoeinWeb.sln"
+:: Please override everythings in <> """ not anything else """
 
 :: Output folder name
 set "output=output"
 
-:: Compile folder name
-set "compileFolder=compile\WooCommerceApi"
+:: Compile folder name depends on build type
+if /i "%buildType%"=="beta" (
+    set "compileFolder=compile-beta\WooCommerceApi"
+) else (
+    set "compileFolder=compile\WooCommerceApi"
+)
 
 :: Solution name
 set "sln=WooCommerceApi.sln"
 
-:: Biuld configuration name, default is "Compile"
+:: Build configuration name
 set "buildConfigurationName=Compile"
 
 :: Compile path
 set "compileOutput=%cd%\%output%\%compileFolder%"
 
-:: ----------------------------- END_VARIABLES -----------------------------
-
-
 :: ------------------------ INFORMATION_VALIDATION -------------------------
 
-echo output folder name: %output%
-echo compile folder name: %compileFolder%
-echo solution name: %sln%
-echo build configuration name: %buildConfigurationName%
-echo compile output: %compileOutput%
-
 echo:
-echo "The above information correct? If you make a mistake, exit the program"
+echo Build type: %buildType%
+echo Output folder: %output%
+echo Compile folder: %compileFolder%
+echo Solution name: %sln%
+echo Build configuration name: %buildConfigurationName%
+echo Compile output path: %compileOutput%
+echo:
+echo "If the above information is correct, press any key to continue..."
 pause
-
-:: ----------------------- END_INFORMATION_VALIDATION ----------------------
-
 
 :: ----------------------------- CREATE_FOLDERS ----------------------------
 
-:: create output foldwer if it not exist
+:: Create output folder if it doesn't exist
 if not exist "%output%" (
-	echo creating %output% folder
+    echo Creating %output% folder...
     mkdir "%output%"
 )
 
-:: remove compile folder (or any other name you set) if it exist.
+:: Remove existing compile output folder if it exists
 if exist "%compileOutput%" (
-	echo removing %compileOutput%
+    echo Removing old folder: %compileOutput%
     rmdir /s /q "%compileOutput%"
 )
 
 :: Create new compile folder
-echo creating new %compileFolder% folder
+echo Creating new folder: %compileOutput%
 mkdir "%compileOutput%"
-
-:: --------------------------- END_CREATE_FOLDERS --------------------------
-
 
 :: ------------------------------ GET_COMPILE ------------------------------
 
-:: restore packages
-echo installing packages
+:: Restore packages
+echo Restoring NuGet packages...
 nuget restore "%sln%"
 
-:: getting build
-echo getting build in progress...
+:: Compile project
+echo Compiling project...
 msbuild "%sln%" /t:Clean,Build /p:Configuration=%buildConfigurationName%;Platform=x86;OutputPath="%compileOutput%"
 
-:: ---------------------------- END_GET_COMPILE ----------------------------
+:: ---------------------------- DONE ----------------------------
 
-
-echo Build finished at -------------------- %time%-------------------
+echo:
+echo Build finished at -------------------- %time% -------------------
 pause
 exit
