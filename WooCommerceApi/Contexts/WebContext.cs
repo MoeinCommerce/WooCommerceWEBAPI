@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -645,8 +645,11 @@ namespace WooCommerceApi.Contexts
 
             if (orderStatuses != null && orderStatuses.Any())
             {
+                if (!orderStatuses.Contains(OrderStatus.Other))
+            {
                 string orderStatusString = string.Join(",", orderStatuses.Select(orderStatus => Constants.OrderStatuses[orderStatus]));
                 request.AddParameter("status", orderStatusString);
+                }
             }
             else
             {
