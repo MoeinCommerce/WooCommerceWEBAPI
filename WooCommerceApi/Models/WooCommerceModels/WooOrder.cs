@@ -85,7 +85,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
         public int VariationId { get; set; }
         
         [JsonProperty("quantity")]
-        public int Quantity { get; set; }
+        public double Quantity { get; set; }
         
         [JsonProperty("tax_class")]
         public string TaxClass { get; set; }

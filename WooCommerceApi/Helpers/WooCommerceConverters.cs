@@ -45,7 +45,7 @@ namespace WooCommerceApi.Helpers
                 Sku = wooProduct.Sku,
                 RegularPrice = TryToDecimal(wooProduct.RegularPrice),
                 SalePrice = TryToNullableDecimal(wooProduct.SalePrice),
-                StockQuantity = TryToInt(wooProduct.StockQuantity),
+                StockQuantity = TryToDouble(wooProduct.StockQuantity),
                 Categories =  wooProduct.Categories?.Select(c => new WebCategory
                 {
                     Id = c.Id
@@ -150,6 +150,7 @@ namespace WooCommerceApi.Helpers
                 TransactionId = wooOrder.TransactionId,
                 Status = orderStatus,
                 StatusText = wooOrder.Status,
+                IsConverted = false,
                 DateCreated = wooOrder.DateCreated ?? DateTime.Now,
                 DateModified = wooOrder.DateModified ?? DateTime.Now,
                 Currency = wooOrder.Currency,
@@ -212,6 +213,10 @@ namespace WooCommerceApi.Helpers
         internal static int TryToInt(object value)
         {
             return int.TryParse(value?.ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var result) ? result : 0;
+        }
+        internal static double TryToDouble(object value)
+        {
+            return double.TryParse(value?.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var result) ? result : 0;
         }
 
         internal static decimal TryToDecimal(object value)
