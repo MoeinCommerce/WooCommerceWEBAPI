@@ -623,7 +623,44 @@ namespace WooCommerceApi.Contexts
                 return true;
             }).Select(WooCommerceConverters.ToWebOrder).ToList();
         }
-        
+        public new IEnumerable<WebOrder> GetOrdersByFilters(DateTime? startDate, DateTime? endDate, IEnumerable<int> idsToExclude = null, IEnumerable<OrderStatus> orderStatuses = null)
+        {
+            const string endPoint = "orders";
+            if (idsToExclude == null)
+            {
+                idsToExclude = new List<int>();
+            }
+            var idsToExcludeString = string.Join(",", idsToExclude);
+            var request = new RestRequest(endPoint, Method.Get);
+            request.AddParameter("exclude", idsToExcludeString);
+            if (orderStatuses != null && orderStatuses.Any())
+            {
+                if (!orderStatuses.Contains(OrderStatus.Other))
+                {
+                    string orderStatusString = string.Join(",", orderStatuses.Select(orderStatus => Constants.OrderStatuses[orderStatus]));
+                    request.AddParameter("status", orderStatusString);
+                }
+            }
+            else
+            {
+                return new List<WebOrder>();
+            }
+            if (startDate.HasValue)
+            {
+                request.AddParameter("after", startDate.Value.ToString("o")); // ISO 8601 format
+            }
+            if (endDate.HasValue)
+            {
+                request.AddParameter("before", endDate.Value.ToString("o")); // ISO 8601 format
+            }
+            var results = new List<WooOrder>();
+            return GetAllWithPagination<WooOrder>(request, pageResults =>
+            {
+                results.AddRange(pageResults);
+                return true;
+            }).Select(WooCommerceConverters.ToWebOrder).ToList();
+        }
+
         public new IEnumerable<WebOrder> GetOrdersBySearch(
             IEnumerable<int> idsToExclude,
             string searchTerm,
