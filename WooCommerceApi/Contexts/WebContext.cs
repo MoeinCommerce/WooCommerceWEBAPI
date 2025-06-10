@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using RestSharp.Authenticators;
 using WebApi.Contexts;
 using WebApi.Contexts.Interfaces;
 using WebApi.Exceptions;
@@ -18,7 +19,7 @@ using WooCommerceApi.Helpers;
 using WooCommerceApi.Models.WooCommerceModels;
 using WooCommerceApi.Utilities;
 using Exception = System.Exception;
-
+   
 namespace WooCommerceApi.Contexts
 {
     public class WebContext : BaseWebContext, IWebContext
@@ -35,14 +36,21 @@ namespace WooCommerceApi.Contexts
                 var consumerKey = configs["WooCommerceConsumerKey"];
                 var consumerSecret = configs["WooCommerceConsumerSecret"];
                 const string path = "wp-json/wc/v3";
-                _client = new RestClient(new Uri(new Uri(url), path));
-                
-                // Set default headers
-                _client.AddDefaultHeader("Accept", "application/json");
 
-                // Set authentication using WooCommerce API keys
-                var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{consumerKey}:{consumerSecret}"));
-                _client.AddDefaultHeader("Authorization", $"Basic {credentials}");
+                var options = new RestClientOptions(new Uri(new Uri(url), path))
+                {
+                    Authenticator = OAuth1Authenticator.ForProtectedResource(
+                        consumerKey,
+                        consumerSecret,
+                        string.Empty,  // No token needed for WooCommerce
+                        string.Empty   // No token secret needed for WooCommerce
+                    )
+                };
+
+                _client = new RestClient(options);
+
+                // Optional: Add default Accept header
+                _client.AddDefaultHeader("Accept", "application/json");
             }
             catch (Exception ex)
             {
