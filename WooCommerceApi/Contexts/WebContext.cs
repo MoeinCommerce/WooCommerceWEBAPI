@@ -49,7 +49,6 @@ namespace WooCommerceApi.Contexts
 
                 _client = new RestClient(options);
 
-                // Optional: Add default Accept header
                 _client.AddDefaultHeader("Accept", "application/json");
             }
             catch (Exception ex)
