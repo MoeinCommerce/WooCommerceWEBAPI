@@ -103,20 +103,58 @@ namespace WooCommerceApi.Contexts
                 switch (response.StatusCode)
                 {
                     case HttpStatusCode.OK:
+
                     case HttpStatusCode.Created: // Handle created status for POST requests
                         return Task.FromResult(JsonConvert.DeserializeObject<T>(decodedContent));
+
                     case HttpStatusCode.NotFound:
                         throw new DoesNotExistException();
+
                     case HttpStatusCode.BadRequest:
+                        if (response.Content != null)
+                        {
+                            if (response.Content.Contains("product_invalid_id"))
+                            {
+                                throw new DoesNotExistException();
+                            }
+                            if (response.Content.Contains("product_invalid_sku"))
+                            {
+                                throw new InvalidFieldException("Invalid SKU", response.Content);
+                            }
+                            if (response.Content.Contains("stock_quantity")) 
+                            {
+                                throw new InvalidFieldException("Invalid stock quantity", response.Content);
+                            }
+                            if (response.Content.Contains("term_exists"))
+                            {
+                                throw new InvalidFieldException("Duplicate Name", response.Content);
+                            }
+                        }
                         throw new InvalidFieldException("BadRequest", response.Content);
+
                     case HttpStatusCode.Unauthorized:
-                        throw new InvalidFieldException("Unauthorized", response.Content);
+                        throw new AuthenticationException();
+
                     case HttpStatusCode.Forbidden:
                         throw new InvalidFieldException("Forbidden", response.Content);
+
                     case HttpStatusCode.InternalServerError:
-                        throw new InvalidFieldException("InternalServerError", response.Content);
+                        if (response.Content != null)
+                        {
+                            if (response.Content.Contains("duplicate_term_slug"))
+                            {
+                                throw new InvalidFieldException("Duplicate Name", response.Content);
+                            }
+                            if (response.Content.Contains("missing_parent"))
+                            {
+                                throw new InvalidFieldException("Missing Parent Group", response.Content);
+                            }
+                        }
+                        throw new InternalServerErrorException();
+
                     case 0:
                         throw new NetworkError();
+
                     default:
                         throw new InvalidFieldException($"Error! Status code: {response.StatusCode}", response.Content);
                 }
@@ -258,11 +296,6 @@ namespace WooCommerceApi.Contexts
         }
         public new int UpdateProduct(int id, WebProduct entity, List<ExcludedFields> excludedFields = null)
         {
-            var existingProduct = GetProductById(id);
-            if (existingProduct == null)
-            {
-                throw new DoesNotExistException();
-            }
             if (excludedFields == null)
             {
                 excludedFields = new List<ExcludedFields>();
@@ -472,11 +505,6 @@ namespace WooCommerceApi.Contexts
 
         public new int UpdateCategory(int id, WebCategory entity, List<ExcludedFields> excludedFields = null)
         {
-            var existingCategory = GetCategoryById(id);
-            if (existingCategory == null)
-            {
-                throw new DoesNotExistException();
-            }
             var endPoint = $"products/categories/{id}";
             var request = new RestRequest(endPoint, Method.Put);
             var updatedCategoryData = WooCommerceConverters.ToWooCategory(entity);
