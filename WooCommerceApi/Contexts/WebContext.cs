@@ -53,7 +53,7 @@ namespace WooCommerceApi.Contexts
             }
             catch (Exception ex)
             {
-                throw new InvalidFieldException(ex.Source, ex.Message);
+                throw new WebInvalidFieldException(ex.Source, ex.Message);
             }
         }
         private Task<T> SendRequest<T>(RestRequest request, object body = null, List<ExcludedFields> excludedFields = null)
@@ -108,46 +108,46 @@ namespace WooCommerceApi.Contexts
                         return Task.FromResult(JsonConvert.DeserializeObject<T>(decodedContent));
 
                     case HttpStatusCode.NotFound:
-                        throw new DoesNotExistException();
+                        throw new WebDoesNotExistException();
 
                     case HttpStatusCode.BadRequest:
                         if (response.Content != null)
                         {
                             if (response.Content.Contains("product_invalid_id"))
                             {
-                                throw new DoesNotExistException();
+                                throw new WebDoesNotExistException();
                             }
                             if (response.Content.Contains("product_invalid_sku"))
                             {
-                                throw new InvalidFieldException("Invalid SKU", response.Content);
+                                throw new WebInvalidFieldException(WebExceptionFields.InvalidSku, response.Content);
                             }
                             if (response.Content.Contains("stock_quantity")) 
                             {
-                                throw new InvalidFieldException("Invalid stock quantity", response.Content);
+                                throw new WebInvalidFieldException(WebExceptionFields.InvalidQuantity, response.Content);
                             }
                             if (response.Content.Contains("term_exists"))
                             {
-                                throw new InvalidFieldException("Duplicate Name", response.Content);
+                                throw new WebInvalidFieldException(WebExceptionFields.DuplicateCategoryName, response.Content);
                             }
                         }
-                        throw new InvalidFieldException("BadRequest", response.Content);
+                        throw new WebInvalidFieldException("BadRequest", response.Content);
 
                     case HttpStatusCode.Unauthorized:
-                        throw new AuthenticationException();
+                        throw new WebAuthenticationException();
 
                     case HttpStatusCode.Forbidden:
-                        throw new InvalidFieldException("Forbidden", response.Content);
+                        throw new WebInvalidFieldException("Forbidden", response.Content);
 
                     case HttpStatusCode.InternalServerError:
                         if (response.Content != null)
                         {
                             if (response.Content.Contains("duplicate_term_slug"))
                             {
-                                throw new InvalidFieldException("Duplicate Name", response.Content);
+                                throw new WebInvalidFieldException(WebExceptionFields.DuplicateCategoryName, response.Content);
                             }
                             if (response.Content.Contains("missing_parent"))
                             {
-                                throw new InvalidFieldException("Missing Parent Group", response.Content);
+                                throw new WebInvalidFieldException(WebExceptionFields.MissingParentCategoryId, response.Content);
                             }
                         }
                         throw new InternalServerErrorException();
@@ -156,10 +156,10 @@ namespace WooCommerceApi.Contexts
                         throw new NetworkError();
 
                     default:
-                        throw new InvalidFieldException($"Error! Status code: {response.StatusCode}", response.Content);
+                        throw new WebInvalidFieldException($"Error! Status code: {response.StatusCode}", response.Content);
                 }
             }
-            catch (InvalidFieldException ex)
+            catch (WebInvalidFieldException ex)
             {
                 Console.WriteLine(ex.Message);
                 throw;
