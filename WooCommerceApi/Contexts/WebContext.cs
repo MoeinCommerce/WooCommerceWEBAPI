@@ -769,8 +769,11 @@ namespace WooCommerceApi.Contexts
             string endPoint = $"orders/{orderId}";
             var request = new RestRequest(endPoint, Method.Put);
             string status = Constants.OrderStatuses[orderStatus];
-            request.AddParameter("status", status);
-            SendRequest<WooOrder>(request);
+            var data = new Dictionary<string, string>
+            {
+                { "status", status }
+            };
+            SendRequest<WooOrder>(request, data);
         }
         #endregion
 
