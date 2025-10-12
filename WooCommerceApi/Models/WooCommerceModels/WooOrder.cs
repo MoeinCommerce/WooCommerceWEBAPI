@@ -104,9 +104,6 @@ namespace WooCommerceApi.Models.WooCommerceModels
         
         [JsonProperty("price")]
         public double Price { get; set; }
-        
-        [JsonProperty("taxes")]
-        public List<WooOrderTax> Taxes { get; set; }
     }
 
     public class WooOrderTax

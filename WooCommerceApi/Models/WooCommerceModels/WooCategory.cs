@@ -9,9 +9,6 @@ namespace WooCommerceApi.Models.WooCommerceModels
         [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("slug")]
-        public string Slug { get; set; }
-
         [JsonProperty("parent")]
         public int? Parent { get; set; }
 

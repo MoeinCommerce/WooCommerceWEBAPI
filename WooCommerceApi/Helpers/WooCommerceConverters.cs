@@ -67,7 +67,7 @@ namespace WooCommerceApi.Helpers
                 Name = webCategory.Name,
                 Description = webCategory.Description,
                 Parent = webCategory.ParentId,
-                Slug = webCategory.Name.GenerateSlug()
+                //Slug = webCategory.Name.GenerateSlug()
             };
         }
         
