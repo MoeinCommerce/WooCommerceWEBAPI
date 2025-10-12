@@ -18,7 +18,7 @@ namespace WooCommerceApi
 
         public string ExecutablePath => AppDomain.CurrentDomain.BaseDirectory;
 
-        public string Version => "1.3.5";
+        public string Version => "1.4.0";
         public string IconPath => string.Empty;
 
         public List<WebConfig> Configurations =>
