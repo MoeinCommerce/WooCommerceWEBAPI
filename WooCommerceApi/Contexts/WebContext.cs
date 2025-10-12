@@ -308,12 +308,35 @@ namespace WooCommerceApi.Contexts
             {
                 excludedFields.Add(ExcludedFields.DraftStatus);
             }
+
+            if (entity.Prices != null)
+            {
+                UpdateProductPrices(entity);
+            }
+
             var endpoint = $"products/{id}";
             var request = new RestRequest(endpoint, Method.Put);
             var updatedProductData = WooCommerceConverters.ToWooProduct(entity);
             var updatedProduct = SendRequest<WooProduct>(request, updatedProductData, excludedFields);
 
             return WooCommerceConverters.TryToInt(updatedProduct.Id);
+        }
+        private void UpdateProductPrices(WebProduct entity)
+        {
+            var endpoint = $"products/{entity.Id}/prices";
+            var request = new RestRequest(endpoint, Method.Put);
+
+            var updatedProductData = new
+            {
+                prices = entity.Prices.Select(price => new
+                {
+                    name = price.PriceLevel?.Name,
+                    regular_price = price.RegularPrice,
+                    sale_price = price.SalePrice
+                }).ToList()
+            };
+
+            SendRequest<object>(request, updatedProductData);
         }
 
         public new WebProduct GetProductById(int id)
@@ -475,6 +498,10 @@ namespace WooCommerceApi.Contexts
             if (!excludedFields.Contains(ExcludedFields.DraftStatus))
             {
                 excludedFields.Add(ExcludedFields.DraftStatus);
+            }
+            if (variationProduct.Prices != null)
+            {
+                UpdateProductPrices(variationProduct);
             }
             var endPoint = $"products/{variableId}/variations/{variationProduct.Id}";
             var request = new RestRequest(endPoint, Method.Put);
