@@ -41,12 +41,6 @@ namespace WooCommerceApi.Models.WooCommerceModels
 
         [JsonProperty("sale_price")]
         public string SalePrice { get; set; }
-        
-        [JsonProperty("tax_status")]
-        public string TaxStatus { get; set; }
-
-        [JsonProperty("tax_class")]
-        public string TaxClass { get; set; }
 
         [JsonProperty("manage_stock")]
         public string ManageStock { get; set; }
@@ -74,11 +68,27 @@ namespace WooCommerceApi.Models.WooCommerceModels
         [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("slug")]
-        public string Slug { get; set; }
+        [JsonProperty("variation")]
+        public bool Variation { get; set; } = true;
+
+        [JsonProperty("visible")]
+        public bool Visible { get; set; } = true;
 
         [JsonProperty("option")]
         public string Option { get; set; }
+
+        [JsonProperty("options")]
+        public List<string> Options { get; set; }
+
+        public List<WooAttributeTerm> Terms { get; set; } = new List<WooAttributeTerm>();
+    }
+    public class WooAttributeTerm
+    {
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
     }
 
 
@@ -129,15 +139,6 @@ namespace WooCommerceApi.Models.WooCommerceModels
         [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("position")]
-        public int Position { get; set; }
-
-        [JsonProperty("visible")]
-        public bool Visible { get; set; }
-
-        [JsonProperty("variation")]
-        public bool Variation { get; set; }
-
         [JsonProperty("options")]
         public List<string> Options { get; set; } = new List<string>(); // Initialize to avoid null issues
     }
@@ -155,11 +156,27 @@ namespace WooCommerceApi.Models.WooCommerceModels
 
     public class WooProductVariation
     {
-        [JsonProperty("id")]
+
+        //[JsonProperty("id")]
         public int Id { get; set; }
 
-        [JsonProperty("price")]
-        public string Price { get; set; }
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("date_created")]
+        public DateTime? DateCreated { get; set; }
+
+        [JsonProperty("date_modified")]
+        public DateTime? DateModified { get; set; }
+
+        [JsonProperty("date_created_gmt")]
+        public DateTime? DateCreatedGmt { get; set; }
+
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("sku")]
+        public string Sku { get; set; }
 
         [JsonProperty("regular_price")]
         public string RegularPrice { get; set; }
@@ -167,23 +184,14 @@ namespace WooCommerceApi.Models.WooCommerceModels
         [JsonProperty("sale_price")]
         public string SalePrice { get; set; }
 
-        [JsonProperty("on_sale")]
-        public bool OnSale { get; set; }
-
         [JsonProperty("manage_stock")]
-        public bool ManageStock { get; set; }
+        public string ManageStock { get; set; }
 
         [JsonProperty("stock_quantity")]
-        public int StockQuantity { get; set; }
+        public string StockQuantity { get; set; }
 
-        [JsonProperty("stock_status")]
-        public string StockStatus { get; set; }
-
-        [JsonProperty("weight")]
-        public string Weight { get; set; }
-
-        [JsonProperty("dimensions")]
-        public WooProductDimensions Dimensions { get; set; } // Nested dimensions
+        [JsonProperty("attributes")]
+        public List<WooAttribute> Attributes { get; set; }
     }
 
 }
