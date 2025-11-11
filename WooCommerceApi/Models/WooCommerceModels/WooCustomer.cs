@@ -6,7 +6,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
     public class WooCustomer
     {
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
         
         [JsonProperty("first_name")]
         public string FirstName { get; set; }

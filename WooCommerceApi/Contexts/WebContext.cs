@@ -1,8 +1,6 @@
 ﻿
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -286,15 +284,15 @@ namespace WooCommerceApi.Contexts
         //}UpdateParameter("page", _currentPage.ToString())
              //   .AddOrUpdateParameter("per_page", "100");
 
-        public new int CreateProduct(WebProduct entity, List<ExcludedFields> excludedFields = null)
+        public new long CreateProduct(WebProduct entity, List<ExcludedFields> excludedFields = null)
         {
             const string endpoint = "products";
             var wooProduct = WooCommerceConverters.ToWooProduct(entity);
             var request = new RestRequest(endpoint, Method.Post);
             var createdProduct = SendRequest<WooProduct>(request, wooProduct, excludedFields).Result;
-            return WooCommerceConverters.TryToInt(createdProduct.Id);
+            return createdProduct.Id;
         }
-        public new int CreateVariableProduct(WebProduct variableProduct, List<ExcludedFields> excludedFields = null)
+        public new long CreateVariableProduct(WebProduct variableProduct, List<ExcludedFields> excludedFields = null)
         {
             const string endpoint = "products";
             var wooProduct = WooCommerceConverters.ToWooVariableProduct(variableProduct);
@@ -305,13 +303,13 @@ namespace WooCommerceApi.Contexts
                 var attr = attributes.FirstOrDefault(a => a.Name == attToCreate.Name);
                 if (attr == null)
                 {
-                    int createdAttribute = CreateAttribute(attToCreate);
+                    long createdAttribute = CreateAttribute(attToCreate);
                     attributes.Add(new WooAttribute
                     {
                         Id = createdAttribute,
                         Name = attToCreate.Name,
                     });
-                    int createdTerm = CreateAttributeTerm(createdAttribute, attToCreate.Value);
+                    long createdTerm = CreateAttributeTerm(createdAttribute, attToCreate.Value);
                     attToCreate.Id = createdAttribute;
                 }
                 else
@@ -351,9 +349,9 @@ namespace WooCommerceApi.Contexts
 
             var request = new RestRequest(endpoint, Method.Post);
             var createdProduct = SendRequest<WooProduct>(request, wooProduct, excludedFields).Result;
-            return WooCommerceConverters.TryToInt(createdProduct.Id);
+            return createdProduct.Id;
         }
-        public new int CreateVariationProduct(int variableId, WebProduct variationProduct, List<ExcludedFields> excludedFields = null)
+        public new long CreateVariationProduct(long variableId, WebProduct variationProduct, List<ExcludedFields> excludedFields = null)
         {
             var endPoint = $"products/{variableId}/variations";
             WooProductVariation wooProduct = WooCommerceConverters.ToWooVariationProduct(variationProduct);
@@ -365,13 +363,13 @@ namespace WooCommerceApi.Contexts
                 var attr = attributes.FirstOrDefault(a => a.Name == attToCreate.Name);
                 if (attr == null)
                 {
-                    int createdAttribute = CreateAttribute(attToCreate);
+                    long createdAttribute = CreateAttribute(attToCreate);
                     attributes.Add(new WooAttribute
                     {
                         Id = createdAttribute,
                         Name = attToCreate.Name,
                     });
-                    int createdTerm = CreateAttributeTerm(createdAttribute, attToCreate.Value);
+                    long createdTerm = CreateAttributeTerm(createdAttribute, attToCreate.Value);
                     attr.Id = createdAttribute;
                 }
                 else
@@ -403,17 +401,17 @@ namespace WooCommerceApi.Contexts
 
             var request = new RestRequest(endPoint, Method.Post);
             var createdProduct = SendRequest<WooProductVariation>(request, wooProduct, excludedFields).Result;
-            return WooCommerceConverters.TryToInt(createdProduct.Id);
+            return createdProduct.Id;
         }
-        private int CreateAttribute(WebApi.Models.Attribute attribute)
+        private long CreateAttribute(WebApi.Models.Attribute attribute)
         {
             const string endpoint = "products/attributes";
             var wooAttribute = WooCommerceConverters.ToWooAttribute(attribute);
             var request = new RestRequest(endpoint, Method.Post);
             var createdAttribute = SendRequest<WooAttribute>(request, wooAttribute).Result;
-            return WooCommerceConverters.TryToInt(createdAttribute.Id);
+            return createdAttribute.Id;
         }
-        private int CreateAttributeTerm(int attributeId, string termName)
+        private long CreateAttributeTerm(long attributeId, string termName)
         {
             var endpoint = $"products/attributes/{attributeId}/terms";
             var wooAttributeTerm = new WooAttributeTerm
@@ -422,7 +420,7 @@ namespace WooCommerceApi.Contexts
             };
             var request = new RestRequest(endpoint, Method.Post);
             var createdAttributeTerm = SendRequest<WooAttributeTerm>(request, wooAttributeTerm).Result;
-            return WooCommerceConverters.TryToInt(createdAttributeTerm.Id);
+            return createdAttributeTerm.Id;
         }
         private List<WooAttribute> GetWooAttributes()
         {
@@ -431,7 +429,7 @@ namespace WooCommerceApi.Contexts
             var attributes = SendRequest<IList<WooAttribute>>(request).Result;
             return attributes.ToList();
         }
-        public new int UpdateProduct(int id, WebProduct entity, List<ExcludedFields> excludedFields = null)
+        public new long UpdateProduct(long id, WebProduct entity, List<ExcludedFields> excludedFields = null)
         {
             if (excludedFields == null)
             {
@@ -456,7 +454,7 @@ namespace WooCommerceApi.Contexts
             var updatedProductData = WooCommerceConverters.ToWooProduct(entity);
             var updatedProduct = SendRequest<WooProduct>(request, updatedProductData, excludedFields);
 
-            return WooCommerceConverters.TryToInt(updatedProduct.Id);
+            return updatedProduct.Id;
         }
         private void UpdateProductPrices(WebProduct entity)
         {
@@ -476,7 +474,7 @@ namespace WooCommerceApi.Contexts
             SendRequest<object>(request, updatedProductData);
         }
 
-        public new WebProduct GetProductById(int id)
+        public new WebProduct GetProductById(long id)
         {
             var endpoint = $"products/{id}";
             var request = new RestRequest(endpoint, Method.Get);
@@ -515,7 +513,7 @@ namespace WooCommerceApi.Contexts
             }).Count();
         }
 
-        public new IEnumerable<WebProduct> GetAllProductsExcludingIds(IList<int> idsToExclude)
+        public new IEnumerable<WebProduct> GetAllProductsExcludingIds(IList<long> idsToExclude)
         {
             const string endPoint = "products";
             var idsToExcludeString = string.Join(",", idsToExclude);
@@ -585,12 +583,12 @@ namespace WooCommerceApi.Contexts
             }).Select(WooCommerceConverters.ToWebProduct).ToList();
         }
 
-        public new int GetMaxProductId()
+        public new long GetMaxProductId()
         {
             const string endpoint = "products";
             var request = new RestRequest(endpoint, Method.Get);
             var products = SendRequest<IList<WooProduct>>(request).Result;
-            return products.Max(product => WooCommerceConverters.TryToInt(product.Id));
+            return products.Max(product => product.Id);
         }
         public new IEnumerable<WebProduct> GetVariableProductsBySearch(string searchTerm)
         {
@@ -609,7 +607,7 @@ namespace WooCommerceApi.Contexts
                 return true;
             }).Select(WooCommerceConverters.ToWebProduct).ToList();
         }
-        public new IEnumerable<WebProduct> GetVariationProductsByVariableId(int variableId)
+        public new IEnumerable<WebProduct> GetVariationProductsByVariableId(long variableId)
         {
             string endPoint = $"products/{variableId}/variations";
             var request = new RestRequest(endPoint, Method.Get);
@@ -620,7 +618,7 @@ namespace WooCommerceApi.Contexts
                 return true;
             }).Select(WooCommerceConverters.VariationToWebProduct).ToList();
         }
-        public new void UpdateVariationProduct(int variableId, WebProduct variationProduct, List<ExcludedFields> excludedFields = null)
+        public new void UpdateVariationProduct(long variableId, WebProduct variationProduct, List<ExcludedFields> excludedFields = null)
         {
             if (excludedFields == null)
             {
@@ -648,7 +646,7 @@ namespace WooCommerceApi.Contexts
             SendRequest<WooProduct>(request, updatedProductData, excludedFields);
         }
 
-        public new WebCategory GetCategoryById(int id)
+        public new WebCategory GetCategoryById(long id)
         { 
             var endPoint = $"products/categories/{id}";
             var request = new RestRequest(endPoint, Method.Get);
@@ -660,22 +658,22 @@ namespace WooCommerceApi.Contexts
         {
             throw new System.NotImplementedException();
         }
-        public new int CreateCategory(WebCategory entity, List<ExcludedFields> excludedFields = null)
+        public new long CreateCategory(WebCategory entity, List<ExcludedFields> excludedFields = null)
         {
             const string endPoint = "products/categories";
             var wooCategory = WooCommerceConverters.ToWooCategory(entity);
             var request = new RestRequest(endPoint, Method.Post);
             var createdCategory = SendRequest<WooCategory>(request, wooCategory, excludedFields).Result;
-            return WooCommerceConverters.TryToInt(createdCategory.Id);
+            return createdCategory.Id;
         }
 
-        public new int UpdateCategory(int id, WebCategory entity, List<ExcludedFields> excludedFields = null)
+        public new long UpdateCategory(long id, WebCategory entity, List<ExcludedFields> excludedFields = null)
         {
             var endPoint = $"products/categories/{id}";
             var request = new RestRequest(endPoint, Method.Put);
             var updatedCategoryData = WooCommerceConverters.ToWooCategory(entity);
             var updatedCategory = SendRequest<WooCategory>(request, updatedCategoryData, excludedFields);
-            return WooCommerceConverters.TryToInt(updatedCategory.Id);
+            return updatedCategory.Id;
         }
 
         public new IList<WebCategory> GetAllCategoriesWithFields(IList<string> fields)
@@ -698,7 +696,7 @@ namespace WooCommerceApi.Contexts
             }).Select(WooCommerceConverters.ToWebCategory).ToList();
         }
 
-        public new int GetMaxCategoryId()
+        public new long GetMaxCategoryId()
         {
             throw new System.NotImplementedException();
         }
@@ -764,7 +762,7 @@ namespace WooCommerceApi.Contexts
             }).Select(WooCommerceConverters.ToWebCustomer).ToList();
         }
 
-        public new IEnumerable<KeyValuePair<int, string>> GetCustomerIdAndNameBySearch(
+        public new IEnumerable<KeyValuePair<long, string>> GetCustomerIdAndNameBySearch(
             string searchTerm,
             int page = 1,
             int pageSize = 10,
@@ -779,7 +777,7 @@ namespace WooCommerceApi.Contexts
             var request = new RestRequest(endPoint, Method.Get);
             if (searchTerm == null)
             {
-                return new List<KeyValuePair<int, string>>();
+                return new List<KeyValuePair<long, string>>();
             }
             
             request.AddParameter("search", searchTerm);
@@ -790,10 +788,10 @@ namespace WooCommerceApi.Contexts
                 results.AddRange(pageResults);
                 return true;
             }).Select(w =>
-                new KeyValuePair<int, string>(w.Id, w.FirstName + " " +w.LastName))
+                new KeyValuePair<long, string>(w.Id, w.FirstName + " " +w.LastName))
                 .ToList();
         }
-        public new WebCustomer GetCustomerById(int id)
+        public new WebCustomer GetCustomerById(long id)
         {
             var endPoint = $"customers/{id}";
             var request = new RestRequest(endPoint, Method.Get);
@@ -804,7 +802,7 @@ namespace WooCommerceApi.Contexts
 
         #region Orders
 
-        public new IEnumerable<WebOrder> GetAllOrdersExcludeById(IEnumerable<int> idsToExclude, DateTime? startDate, DateTime? endDate)
+        public new IEnumerable<WebOrder> GetAllOrdersExcludeById(IEnumerable<long> idsToExclude, DateTime? startDate, DateTime? endDate)
         {
             const string endPoint = "orders";
             var idsToExcludeString = string.Join(",", idsToExclude);
@@ -826,12 +824,12 @@ namespace WooCommerceApi.Contexts
                 return true;
             }).Select(WooCommerceConverters.ToWebOrder).ToList();
         }
-        public new IEnumerable<WebOrder> GetOrdersByFilters(DateTime? startDate, DateTime? endDate, IEnumerable<int> idsToExclude = null, IEnumerable<OrderStatus> orderStatuses = null)
+        public new IEnumerable<WebOrder> GetOrdersByFilters(DateTime? startDate, DateTime? endDate, IEnumerable<long> idsToExclude = null, IEnumerable<OrderStatus> orderStatuses = null)
         {
             const string endPoint = "orders";
             if (idsToExclude == null)
             {
-                idsToExclude = new List<int>();
+                idsToExclude = new List<long>();
             }
             var idsToExcludeString = string.Join(",", idsToExclude);
             var request = new RestRequest(endPoint, Method.Get);
@@ -865,10 +863,10 @@ namespace WooCommerceApi.Contexts
         }
 
         public new IEnumerable<WebOrder> GetOrdersBySearch(
-            IEnumerable<int> idsToExclude,
+            IEnumerable<long> idsToExclude,
             string searchTerm,
             IEnumerable<OrderStatus> orderStatuses,
-            int? customerId,
+            long? customerId,
             decimal totalMin,
             decimal totalMax,
             DateTime startDate,
@@ -932,7 +930,7 @@ namespace WooCommerceApi.Contexts
             return results.Select(WooCommerceConverters.ToWebOrder).ToList();
         }
         
-        public new void UpdateOrderStatus(int orderId, OrderStatus orderStatus)
+        public new void UpdateOrderStatus(long orderId, OrderStatus orderStatus)
         {
             string endPoint = $"orders/{orderId}";
             var request = new RestRequest(endPoint, Method.Put);

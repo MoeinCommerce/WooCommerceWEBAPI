@@ -166,7 +166,6 @@ namespace WooCommerceApi.Helpers
                 Name = webCategory.Name,
                 Description = webCategory.Description,
                 Parent = webCategory.ParentId,
-                //Slug = webCategory.Name.GenerateSlug()
             };
         }
         
@@ -308,6 +307,10 @@ namespace WooCommerceApi.Helpers
                 Title = wooPaymentMethod.Title,
                 Description = wooPaymentMethod.Description
             };
+        }
+        internal static long TryToLong(object value)
+        {
+            return long.TryParse(value?.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var result) ? result : 0;
         }
         internal static int TryToInt(object value)
         {

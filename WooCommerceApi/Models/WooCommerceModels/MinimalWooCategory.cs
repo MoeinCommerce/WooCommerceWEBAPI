@@ -5,6 +5,6 @@ namespace WooCommerceApi.Models.WooCommerceModels
     public class MinimalWooCategory
     {
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
     }
 }

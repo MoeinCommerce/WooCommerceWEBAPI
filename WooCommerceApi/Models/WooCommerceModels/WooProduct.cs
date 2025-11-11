@@ -10,7 +10,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
     public class WooProduct
     {
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -63,7 +63,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
     public class WooAttribute
     {
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -85,7 +85,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
     public class WooAttributeTerm
     {
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -103,62 +103,11 @@ namespace WooCommerceApi.Models.WooCommerceModels
         [JsonProperty("height")]
         public string Height { get; set; } = string.Empty;
     }
-
-    public class WooProductCategory
-    {
-        [JsonProperty("id")]
-        public int Id { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("slug")]
-        public string Slug { get; set; }
-    }
-
-    public class WooProductImage
-    {
-        [JsonProperty("id")]
-        public int Id { get; set; }
-
-        [JsonProperty("src")]
-        public string Src { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("alt")]
-        public string Alt { get; set; }
-    }
-
-    public class WooProductAttribute
-    {
-        [JsonProperty("id")]
-        public int Id { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("options")]
-        public List<string> Options { get; set; } = new List<string>(); // Initialize to avoid null issues
-    }
-    public class WooProductDownloadModel
-    {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("file")]
-        public string File { get; set; }
-    }
-
     public class WooProductVariation
     {
 
         //[JsonProperty("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }
