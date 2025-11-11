@@ -12,6 +12,22 @@ namespace WooCommerceApi.Helpers
 {
     public static class WooCommerceConverters
     {
+        public static WooAttribute ToWooAttribute(WebApi.Models.Attribute webAttribute)
+        {
+            return new WooAttribute
+            {
+                Id = webAttribute.Id,
+                Name = webAttribute.Name,
+                Options = new List<string> { webAttribute.Value },
+                Terms = new List<WooAttributeTerm>
+                {
+                    new WooAttributeTerm
+                    {
+                        Name = webAttribute.Value
+                    }
+                }
+            };
+        }
         public static WooProduct ToWooProduct(WebProduct webProduct)
         {
             return new WooProduct
@@ -31,12 +47,52 @@ namespace WooCommerceApi.Helpers
                 Status = "draft"
             };
         }
+        public static WooProduct ToWooVariableProduct(WebProduct webProduct)
+        {
+            return new WooProduct
+            {
+                Id = webProduct.Id,
+                Name = webProduct.Name,
+                Description = webProduct.Description,
+                ManageStock = "true",
+                StockQuantity = webProduct.StockQuantity.ToString(),
+                Sku = webProduct.Sku,
+                Categories = webProduct.Categories?.Select(c => new MinimalWooCategory
+                {
+                    Id = c.Id
+                }).ToList(),
+                Status = "draft",
+                Type = "variable",
+                Attributes = new List<WooAttribute>(),
+                //Attributes = webProduct?.Attributes?.Select(a => new WooAttribute
+                //{
+                //    Id = a.Id,
+                //    Name = a.Name,
+                //    Option = a.Value,
+
+                //})?.ToList() ?? new List<WooAttribute>()
+            };
+        }
+        public static WooProductVariation ToWooVariationProduct(WebProduct webProduct)
+        {
+            return new WooProductVariation
+            {
+                Id = webProduct.Id,
+                Name = webProduct.Name,
+                RegularPrice = webProduct.RegularPrice.ToString(CultureInfo.InvariantCulture),
+                SalePrice = webProduct.SalePrice?.ToString(CultureInfo.InvariantCulture),
+                ManageStock = "true",
+                StockQuantity = webProduct.StockQuantity.ToString(),
+                Sku = webProduct.Sku,
+                Type = "variation",
+            };
+        }
 
         public static WebProduct ToWebProduct(WooProduct wooProduct)
         {
-            return new WebProduct
+            var webProduct = new WebProduct
             {
-                Id = TryToInt(wooProduct.Id),
+                Id = wooProduct.Id,
                 Name = wooProduct.Name,
                 DateCreated = wooProduct.DateCreated ?? DateTime.Now,
                 DateModified = wooProduct.DateModified ?? DateTime.Now,
@@ -46,17 +102,60 @@ namespace WooCommerceApi.Helpers
                 RegularPrice = TryToDecimal(wooProduct.RegularPrice),
                 SalePrice = TryToNullableDecimal(wooProduct.SalePrice),
                 StockQuantity = TryToDouble(wooProduct.StockQuantity),
-                Categories =  wooProduct.Categories?.Select(c => new WebCategory
+                Categories = wooProduct.Categories?.Select(c => new WebCategory
                 {
                     Id = c.Id
-                }).ToList(),
-                Attributes = wooProduct?.Attributes?.Select(w => new WebApi.Models.Attribute
-                {
-                    Id = w.Id,
-                    Name = HttpUtility.UrlDecode(w.Name),
-                    Value = HttpUtility.UrlDecode(w.Option)
-                }).ToList()
+                }).ToList().ToList(),
+                Attributes = new List<WebApi.Models.Attribute>()
+
             };
+
+            if (wooProduct.Attributes != null)
+            {
+                foreach (var attribute in wooProduct.Attributes)
+                {
+                    if (attribute.Options == null)
+                        continue;
+
+                    foreach (var option in attribute.Options)
+                    {
+                        webProduct.Attributes.Add(new WebApi.Models.Attribute
+                        {
+                            Id = attribute.Id,
+                            Name = HttpUtility.UrlDecode(attribute.Name),
+                            Value = HttpUtility.UrlDecode(option),
+                        });
+                    }
+                }
+            }
+            return webProduct;
+        }
+        public static WebProduct VariationToWebProduct(WooProduct wooProduct)
+        {
+            var webProduct = new WebProduct
+            {
+                Id = wooProduct.Id,
+                Name = wooProduct.Name,
+                DateCreated = wooProduct.DateCreated ?? DateTime.Now,
+                DateModified = wooProduct.DateModified ?? DateTime.Now,
+                Description = wooProduct.Description,
+                Sku = wooProduct.Sku,
+                RegularPrice = TryToDecimal(wooProduct.RegularPrice),
+                SalePrice = TryToNullableDecimal(wooProduct.SalePrice),
+                StockQuantity = TryToDouble(wooProduct.StockQuantity),
+                Categories = wooProduct.Categories?.Select(c => new WebCategory
+                {
+                    Id = c.Id
+                }).ToList().ToList(),
+                Attributes = wooProduct.Attributes?.Select(a => new WebApi.Models.Attribute
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Value = a.Option,
+                }).ToList() ?? new List<WebApi.Models.Attribute>()
+
+            };
+            return webProduct;
         }
 
         public static WooCategory ToWooCategory(WebCategory webCategory)

@@ -294,6 +294,143 @@ namespace WooCommerceApi.Contexts
             var createdProduct = SendRequest<WooProduct>(request, wooProduct, excludedFields).Result;
             return WooCommerceConverters.TryToInt(createdProduct.Id);
         }
+        public new int CreateVariableProduct(WebProduct variableProduct, List<ExcludedFields> excludedFields = null)
+        {
+            const string endpoint = "products";
+            var wooProduct = WooCommerceConverters.ToWooVariableProduct(variableProduct);
+
+            var attributes = GetWooAttributes();
+            foreach (var attToCreate in variableProduct.Attributes)
+            {
+                var attr = attributes.FirstOrDefault(a => a.Name == attToCreate.Name);
+                if (attr == null)
+                {
+                    int createdAttribute = CreateAttribute(attToCreate);
+                    attributes.Add(new WooAttribute
+                    {
+                        Id = createdAttribute,
+                        Name = attToCreate.Name,
+                    });
+                    int createdTerm = CreateAttributeTerm(createdAttribute, attToCreate.Value);
+                    attToCreate.Id = createdAttribute;
+                }
+                else
+                {
+                    attToCreate.Id = attr.Id;
+                    var termExists = false;
+                    var endpoint1 = $"products/attributes/{attToCreate.Id}/terms";
+                    var request1 = new RestRequest(endpoint1, Method.Get);
+                    var attributeTerms = SendRequest<IList<WooAttributeTerm>>(request1).Result;
+                    foreach (var term in attributeTerms)
+                    {
+                        if (term.Name == attToCreate.Value)
+                        {
+                            termExists = true;
+                            break;
+                        }
+                    }
+                    if (!termExists)
+                    {
+                        CreateAttributeTerm(attToCreate.Id, attToCreate.Value);
+                    }
+                }
+                var existingAttribute = wooProduct.Attributes.FirstOrDefault(a => a.Name == attToCreate.Name);
+                if (existingAttribute == null)
+                {
+                    wooProduct.Attributes.Add(new WooAttribute
+                    {
+                        Id = attToCreate.Id,
+                        Name = attToCreate.Name,
+                        Option = attToCreate.Value,
+                        Options = new List<string>()
+                    });
+                }
+                existingAttribute = wooProduct.Attributes.FirstOrDefault(a => a.Name == attToCreate.Name);
+                existingAttribute.Options.Add(attToCreate.Value);
+            }
+
+            var request = new RestRequest(endpoint, Method.Post);
+            var createdProduct = SendRequest<WooProduct>(request, wooProduct, excludedFields).Result;
+            return WooCommerceConverters.TryToInt(createdProduct.Id);
+        }
+        public new int CreateVariationProduct(int variableId, WebProduct variationProduct, List<ExcludedFields> excludedFields = null)
+        {
+            var endPoint = $"products/{variableId}/variations";
+            WooProductVariation wooProduct = WooCommerceConverters.ToWooVariationProduct(variationProduct);
+            wooProduct.Attributes = new List<WooAttribute>();
+
+            var attributes = GetWooAttributes();
+            foreach (var attToCreate in variationProduct.Attributes)
+            {
+                var attr = attributes.FirstOrDefault(a => a.Name == attToCreate.Name);
+                if (attr == null)
+                {
+                    int createdAttribute = CreateAttribute(attToCreate);
+                    attributes.Add(new WooAttribute
+                    {
+                        Id = createdAttribute,
+                        Name = attToCreate.Name,
+                    });
+                    int createdTerm = CreateAttributeTerm(createdAttribute, attToCreate.Value);
+                    attr.Id = createdAttribute;
+                }
+                else
+                {
+                    var termExists = false;
+                    var endpoint = $"products/attributes/{attr.Id}/terms";
+                    var request1 = new RestRequest(endpoint, Method.Get);
+                    var attributeTerms = SendRequest<IList<WooAttributeTerm>>(request1).Result;
+                    foreach (var term in attributeTerms)
+                    {
+                        if (term.Name == attToCreate.Value)
+                        {
+                            termExists = true;
+                            break;
+                        }
+                    }
+                    if (!termExists)
+                    {
+                        CreateAttributeTerm(attr.Id, attToCreate.Value);
+                    }
+                }
+                wooProduct.Attributes.Add(new WooAttribute
+                {
+                    Id = attr.Id,
+                    Name = attToCreate.Name,
+                    Option = attToCreate.Value
+                });
+            }
+
+            var request = new RestRequest(endPoint, Method.Post);
+            var createdProduct = SendRequest<WooProductVariation>(request, wooProduct, excludedFields).Result;
+            return WooCommerceConverters.TryToInt(createdProduct.Id);
+        }
+        private int CreateAttribute(WebApi.Models.Attribute attribute)
+        {
+            const string endpoint = "products/attributes";
+            var wooAttribute = WooCommerceConverters.ToWooAttribute(attribute);
+            var request = new RestRequest(endpoint, Method.Post);
+            var createdAttribute = SendRequest<WooAttribute>(request, wooAttribute).Result;
+            return WooCommerceConverters.TryToInt(createdAttribute.Id);
+        }
+        private int CreateAttributeTerm(int attributeId, string termName)
+        {
+            var endpoint = $"products/attributes/{attributeId}/terms";
+            var wooAttributeTerm = new WooAttributeTerm
+            {
+                Name = termName
+            };
+            var request = new RestRequest(endpoint, Method.Post);
+            var createdAttributeTerm = SendRequest<WooAttributeTerm>(request, wooAttributeTerm).Result;
+            return WooCommerceConverters.TryToInt(createdAttributeTerm.Id);
+        }
+        private List<WooAttribute> GetWooAttributes()
+        {
+            const string endpoint = "products/attributes";
+            var request = new RestRequest(endpoint, Method.Get);
+            var attributes = SendRequest<IList<WooAttribute>>(request).Result;
+            return attributes.ToList();
+        }
         public new int UpdateProduct(int id, WebProduct entity, List<ExcludedFields> excludedFields = null)
         {
             if (excludedFields == null)
@@ -433,9 +570,11 @@ namespace WooCommerceApi.Contexts
                 .Where(value => !string.IsNullOrEmpty(value))
                 .ToList();
 
+            _pageSize = 100;
             const string endPoint = "products";
             var fieldsString = string.Join(",", fieldList);
             var request = new RestRequest(endPoint, Method.Get);
+            request.AddOrUpdateParameter("per_page", _pageSize.ToString());
             request.AddParameter("_fields", fieldsString);
             request.AddParameter("type", productTypeString);
             var results = new List<WooProduct>();
@@ -479,7 +618,7 @@ namespace WooCommerceApi.Contexts
             {
                 results.AddRange(pageResults);
                 return true;
-            }).Select(WooCommerceConverters.ToWebProduct).ToList();
+            }).Select(WooCommerceConverters.VariationToWebProduct).ToList();
         }
         public new void UpdateVariationProduct(int variableId, WebProduct variationProduct, List<ExcludedFields> excludedFields = null)
         {
@@ -550,6 +689,8 @@ namespace WooCommerceApi.Contexts
             var request = new RestRequest(endPoint, Method.Get);
             request.AddParameter("_fields", fieldsString);
             var results = new List<WooCategory>();
+            _pageSize = 100;
+            request.AddOrUpdateParameter("per_page", _pageSize.ToString());
             return GetAllWithPagination<WooCategory>(request, pageResults =>
             {
                 results.AddRange(pageResults);
