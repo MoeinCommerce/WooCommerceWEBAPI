@@ -57,6 +57,9 @@ namespace WooCommerceApi.Models.WooCommerceModels
         [JsonProperty("attributes")]
         public List<WooAttribute> Attributes { get; set; }
 
+        [JsonProperty("variations")]
+        public List<int> VariationIds { get; set; }
+
         [JsonProperty("status")]
         public string Status { get; set; }
     }
