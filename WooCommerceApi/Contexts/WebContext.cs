@@ -576,6 +576,12 @@ namespace WooCommerceApi.Contexts
             request.AddParameter("_fields", fieldsString);
             request.AddParameter("type", productTypeString);
             var results = new List<WooProduct>();
+
+            if (productType == ProductTypes.Variable)
+            {
+                fieldsString += ",attributes";
+                request.AddOrUpdateParameter("_fields", fieldsString);
+            }
             return GetAllWithPagination<WooProduct>(request, pageResults =>
             {
                 results.AddRange(pageResults);
