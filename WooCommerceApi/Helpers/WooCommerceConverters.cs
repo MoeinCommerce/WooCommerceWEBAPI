@@ -128,6 +128,13 @@ namespace WooCommerceApi.Helpers
                     }
                 }
             }
+            if (wooProduct.Type == "variable" && wooProduct.VariationIds != null)
+            {
+                webProduct.Variations = wooProduct.VariationIds.Select(id => new WebProduct
+                {
+                    Id = id
+                }).ToList();
+            }
             return webProduct;
         }
         public static WebProduct VariationToWebProduct(WooProduct wooProduct)
@@ -150,8 +157,8 @@ namespace WooCommerceApi.Helpers
                 Attributes = wooProduct.Attributes?.Select(a => new WebApi.Models.Attribute
                 {
                     Id = a.Id,
-                    Name = a.Name,
-                    Value = a.Option,
+                    Name = HttpUtility.UrlDecode(a.Name),
+                    Value = HttpUtility.UrlDecode(a.Option),
                 }).ToList() ?? new List<WebApi.Models.Attribute>()
 
             };
