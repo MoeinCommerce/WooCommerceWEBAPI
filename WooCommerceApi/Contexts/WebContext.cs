@@ -384,7 +384,7 @@ namespace WooCommerceApi.Contexts
                 else
                 {
                     var termExists = false;
-                    var attributeTerms = GetAttributeTerms(attToCreate.Id);
+                    var attributeTerms = GetAttributeTerms(attr.Id);
                     foreach (var term in attributeTerms)
                     {
                         if (term.Name == attToCreate.Value)
