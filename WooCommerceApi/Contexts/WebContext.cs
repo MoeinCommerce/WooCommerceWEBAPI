@@ -292,6 +292,17 @@ namespace WooCommerceApi.Contexts
             var createdProduct = SendRequest<WooProduct>(request, wooProduct, excludedFields).Result;
             return createdProduct.Id;
         }
+
+        private List<WooAttributeTerm> GetAttributeTerms(string attributeId)
+        {
+            var endpoint = $"products/attributes/{attributeId}/terms";
+            var request = new RestRequest(endpoint, Method.Get);
+            return GetAllWithPagination<WooAttributeTerm>(request, pageResults =>
+            {
+                return true;
+            }).ToList();
+        }
+
         public new string CreateVariableProduct(WebProduct variableProduct, List<ExcludedFields> excludedFields = null)
         {
             const string endpoint = "products";
@@ -316,9 +327,7 @@ namespace WooCommerceApi.Contexts
                 {
                     attToCreate.Id = attr.Id;
                     var termExists = false;
-                    var endpoint1 = $"products/attributes/{attToCreate.Id}/terms";
-                    var request1 = new RestRequest(endpoint1, Method.Get);
-                    var attributeTerms = SendRequest<IList<WooAttributeTerm>>(request1).Result;
+                    var attributeTerms = GetAttributeTerms(attToCreate.Id);
                     foreach (var term in attributeTerms)
                     {
                         if (term.Name == attToCreate.Value)
@@ -375,9 +384,7 @@ namespace WooCommerceApi.Contexts
                 else
                 {
                     var termExists = false;
-                    var endpoint = $"products/attributes/{attr.Id}/terms";
-                    var request1 = new RestRequest(endpoint, Method.Get);
-                    var attributeTerms = SendRequest<IList<WooAttributeTerm>>(request1).Result;
+                    var attributeTerms = GetAttributeTerms(attToCreate.Id);
                     foreach (var term in attributeTerms)
                     {
                         if (term.Name == attToCreate.Value)
