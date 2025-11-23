@@ -10,7 +10,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
     public class WooProduct
     {
         [JsonProperty("id")]
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -58,7 +58,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
         public List<WooAttribute> Attributes { get; set; }
 
         [JsonProperty("variations")]
-        public List<int> VariationIds { get; set; }
+        public List<string> VariationIds { get; set; }
 
         [JsonProperty("status")]
         public string Status { get; set; }
@@ -66,7 +66,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
     public class WooAttribute
     {
         [JsonProperty("id")]
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -88,7 +88,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
     public class WooAttributeTerm
     {
         [JsonProperty("id")]
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -110,7 +110,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
     {
 
         //[JsonProperty("id")]
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }

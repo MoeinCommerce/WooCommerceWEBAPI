@@ -10,10 +10,10 @@ namespace WooCommerceApi.Models.WooCommerceModels
     public class WooOrder
     {
         [JsonProperty("id")]
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         [JsonProperty("customer_id")]
-        public long CustomerId { get; set; }
+        public string CustomerId { get; set; }
 
         [JsonProperty("customer_note")]
         public string CustomerNote { get; set; }
@@ -73,16 +73,16 @@ namespace WooCommerceApi.Models.WooCommerceModels
     public class WooOrderLineItem
     {
         [JsonProperty("id")]
-        public long Id { get; set; }
+        public string Id { get; set; }
         
         [JsonProperty("name")]
         public string Name { get; set; }
         
         [JsonProperty("product_id")]
-        public long ProductId { get; set; }
+        public string ProductId { get; set; }
         
         [JsonProperty("variation_id")]
-        public long VariationId { get; set; }
+        public string VariationId { get; set; }
         
         [JsonProperty("quantity")]
         public double Quantity { get; set; }
@@ -118,7 +118,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
     public class WooOrderShippingLine
     {
         [JsonProperty("id")]
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         [JsonProperty("method_title")]
         public string MethodTitle { get; set; }
@@ -135,7 +135,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
 
     public class WooOrderFeeLine
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string TaxClass { get; set; }
         public string TaxStatus { get; set; }
@@ -146,7 +146,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
 
     public class WooOrderCouponLine
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
         public string Code { get; set; }
         public string Discount { get; set; }
         public string DiscountTax { get; set; }
@@ -154,7 +154,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
 
     public class WooOrderTaxLine
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
         public string RateCode { get; set; }
         public string RateId { get; set; }
         public string Label { get; set; }

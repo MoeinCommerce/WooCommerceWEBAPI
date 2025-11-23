@@ -10,7 +10,7 @@ namespace WooCommerceApi.Models.WooCommerceModels
         public string Name { get; set; }
 
         [JsonProperty("parent")]
-        public long? Parent { get; set; }
+        public string Parent { get; set; }
 
         [JsonProperty("description")]
         public string Description { get; set; }

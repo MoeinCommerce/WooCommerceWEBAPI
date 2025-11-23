@@ -215,10 +215,10 @@ namespace WooCommerceApi.Helpers
         {
             return new WebCategory
             {
-                Id = TryToNullableInt(wooCategory.Id) ?? 0,  // Assigns 0 if Id is null
+                Id = wooCategory.Id,  // Assigns 0 if Id is null
                 Name = wooCategory.Name,
                 Description = wooCategory.Description,
-                ParentId = TryToNullableInt(wooCategory.Parent)
+                ParentId = wooCategory.Parent
             };
         }
 
@@ -232,9 +232,6 @@ namespace WooCommerceApi.Helpers
                 orderStatus = OrderStatus.Other;
             }
 
-
-            Constants.PaymentMethods.TryGetValue(wooOrder.PaymentMethod, out var paymentMethodIntId);
-
             double totalTax = wooOrder.TotalTax;
             double sumOfSubTaxes = wooOrder.LineItems.Sum(x => x.SubtotalTax);
             bool isTaxAfterDiscount = totalTax != sumOfSubTaxes;
@@ -245,11 +242,11 @@ namespace WooCommerceApi.Helpers
             {
                 Id = wooOrder.Id,
                 OrderPath = string.Format(Constants.OrderPath, wooOrder.Id),
-                CustomerId = wooOrder.CustomerId,
+                CustomerId = wooOrder.CustomerId != null && wooOrder.CustomerId != "0" ? wooOrder.CustomerId : null,
                 CustomerNote = wooOrder.CustomerNote,
                 PaymentMethod = new WebPaymentMethod
                 {
-                    Id = paymentMethodIntId,
+                    Id = wooOrder.PaymentMethod,
                     Title = wooOrder.PaymentMethodTitle,
                 },
                 TransactionId = wooOrder.TransactionId,
@@ -264,7 +261,7 @@ namespace WooCommerceApi.Helpers
                 Shipping = MapCustomer(wooOrder.Shipping),
                 ShippingDetail = new WebShippingDetail
                 {
-                    VehicleId = int.TryParse(firstShippingLine?.MethodId, out int methodId) ? methodId : 0,
+                    VehicleId = firstShippingLine?.MethodId,
                     VehicleName = firstShippingLine?.MethodTitle,
                     VehiclePrice = double.TryParse(firstShippingLine?.Total, out double shippingTotal) ? shippingTotal : 0
                 },
@@ -274,7 +271,7 @@ namespace WooCommerceApi.Helpers
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
                     UnitPrice = item.Quantity == 0 ? item.Subtotal : item.Subtotal / item.Quantity,
-                    VariationId = item.VariationId,
+                    VariationId = item.VariationId != null && item.VariationId != "0" ? item.VariationId : null,
                     UnitDiscount = (item.Subtotal - item.Total) / item.Quantity,
                     UnitTax = (isTaxAfterDiscount ? item.TotalTax : item.SubtotalTax) / item.Quantity
                 }).ToList()
@@ -307,17 +304,12 @@ namespace WooCommerceApi.Helpers
 
         public static WebPaymentMethod ToWebPaymentMethod(WooPaymentMethod wooPaymentMethod)
         {
-            Constants.PaymentMethods.TryGetValue(wooPaymentMethod.Id, out var paymentMethodIntId);
             return new WebPaymentMethod
             {
-                Id = paymentMethodIntId,
+                Id = wooPaymentMethod.Id,
                 Title = wooPaymentMethod.Title,
                 Description = wooPaymentMethod.Description
             };
-        }
-        internal static long TryToLong(object value)
-        {
-            return long.TryParse(value?.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var result) ? result : 0;
         }
         internal static int TryToInt(object value)
         {
